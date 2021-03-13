@@ -2,14 +2,18 @@
 
 #include <string>
 
-using namespace std;
-
 class Level {
 public:
-	Level(string name);
-	~Level();
-	string name();
+	Level(std::string name)
+	{
+		_name = name;
+	}
+
+	std::string name()
+	{
+		return _name;
+	}
 
 private:
-	string _name;
+	std::string _name;
 };
