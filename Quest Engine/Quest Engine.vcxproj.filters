@@ -16,6 +16,9 @@
     <Filter Include="Libraries">
       <UniqueIdentifier>{b1091262-4e91-45eb-bcc8-b1b0200f81bf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DemoLevel">
+      <UniqueIdentifier>{0c97a65c-6414-4c06-b048-d399b775a63f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -55,6 +58,9 @@
     </ClInclude>
     <ClInclude Include="tiny_obj_loader.h">
       <Filter>Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="DemoLevel.h">
+      <Filter>DemoLevel</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

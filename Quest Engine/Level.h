@@ -2,18 +2,28 @@
 
 #include <string>
 
+#include "Entity.h"
+
 class Level {
 public:
-	Level(std::string name)
+	virtual std::string name()
 	{
-		_name = name;
+		return "Unnamed Level";
 	}
 
-	std::string name()
+	void render()
 	{
-		return _name;
+		for (auto &entity : entities)
+		{
+			entity.second->render();
+		}
 	}
 
-private:
-	std::string _name;
+protected:
+	std::map<entity_id_t, Entity*> entities;
+
+	void addEntity(Entity* entity)
+	{
+		entities[entity->id()] = entity;
+	}
 };

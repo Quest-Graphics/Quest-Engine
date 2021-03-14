@@ -66,7 +66,22 @@ private:
 
 	static void onDisplay(void)
 	{
-		// Render
+		if (_overlay)
+		{
+			_overlay->render();
+		}
+		else
+		{
+			if (_level)
+			{
+				_level->render();
+			}
+
+			if (_player)
+			{
+				_player->render();
+			}
+		}
 	}
 
 	static void onIdle(void)

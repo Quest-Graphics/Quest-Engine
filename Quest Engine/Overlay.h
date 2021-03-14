@@ -6,6 +6,7 @@ class Overlay
 public:
 	virtual void onKeyboard(unsigned char, int, int);
 	virtual void onSpecialInput(int, int, int);
+	virtual void render();
 
 private:
 	Overlay();
