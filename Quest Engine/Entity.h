@@ -71,7 +71,11 @@ public:
 		{
 			std::cout << "Entity " << _id << " loading new model " << objectFile << std::endl;
 			std::string warn, err;
-			bool success = tinyobj::LoadObj(&model.attributes, &model.shapes, &model.materials, &warn, &err, objectFile.c_str());
+			bool success = tinyobj::LoadObj(
+				&model.attributes, &model.shapes, &model.materials, // Load output
+				&warn, &err,								        // Status output
+				("Models/" + objectFile).c_str(), "Models"          // Input locations
+			);
 
 			if (!warn.empty())
 			{

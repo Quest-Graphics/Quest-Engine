@@ -6,7 +6,7 @@ int main(int argc, char* argv[]) {
 
 	// Create main player
 	Player player;
-	player.setModel("Models/bernie.obj");
+	player.setModel("bernie.obj");
 
 	// Run game
 	Game::setPlayerCharacter(&player);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Level.h"
+#include "Scene.h"
 
 class DemoLevel : public Level
 {
@@ -9,7 +10,7 @@ public:
 	{
 		for (auto i = 0; i < 5; i++)
 		{
-			addEntity(new Entity("Models/cube.obj"));
+			addEntity(new Scene("STAGE1.obj"));
 		}
 	}
 
