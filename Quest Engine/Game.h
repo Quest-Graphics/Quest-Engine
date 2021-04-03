@@ -2,6 +2,7 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <glm/glm.hpp>
 
 #include <string>
 
@@ -21,13 +22,15 @@ using namespace std;
  */
 class Game {
 public:
-	static void run(string name)
+	static void run(string name, glm::vec3 bgColor)
 	{
 		// Create glut window
 		glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 		glutInitWindowSize(1024, 768);
 		glutInitWindowPosition(100, 100);
 		glutCreateWindow(name.c_str());
+		glClearColor(bgColor.r, bgColor.g, bgColor.b, 0.0f);
+		glEnable(GL_DEPTH_TEST);
 		checkError("run/window");
 
 		// Register event handlers
@@ -40,7 +43,6 @@ public:
 		checkError("run/event");
 
 		// Enter the main loop
-		glEnable(GL_DEPTH_TEST);
 		glutMainLoop();
 	}
 
@@ -66,6 +68,8 @@ private:
 
 	static void onDisplay(void)
 	{
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		if (_overlay)
 		{
 			_overlay->render();
@@ -82,11 +86,16 @@ private:
 				_player->render();
 			}
 		}
+
+		checkError();
 	}
 
 	static void onIdle(void)
 	{
 		// Background tasks
+
+		// Redraw
+		glutPostRedisplay();
 	}
 
 	static void onKeyboard(unsigned char key, int x, int y)

@@ -1,5 +1,5 @@
 #include "Game.h"
 
-Level* Game::_level;
-Player* Game::_player;
-Overlay* Game::_overlay;
+Level* Game::_level = nullptr;
+Player* Game::_player = nullptr;
+Overlay* Game::_overlay = nullptr;

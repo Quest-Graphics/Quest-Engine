@@ -11,5 +11,5 @@ int main(int argc, char* argv[]) {
 	// Run game
 	Game::setPlayerCharacter(&player);
 	Game::loadLevel(new DemoLevel());
-	Game::run("Dungeon Quest");
+	Game::run("Dungeon Quest", glm::vec3(0.1f, 0.1f, 0.1f));
 }
