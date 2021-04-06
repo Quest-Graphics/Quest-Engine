@@ -82,7 +82,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="tiny_obj_loader.cpp" />
   </ItemGroup>
@@ -90,7 +89,6 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="DemoLevel.h" />
     <ClInclude Include="Entity.h" />
-    <ClInclude Include="Game.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="Overlay.h" />
