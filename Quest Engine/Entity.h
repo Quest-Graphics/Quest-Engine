@@ -106,6 +106,14 @@ public:
 			}
 		}
 
+		for (int i = 0; i < model.shapes.size(); i++) {
+			model.m_VBO.push_back(0);
+			model.m_NBO.push_back(0);
+			model.m_IBO.push_back(0);
+			glGenBuffers(1, &model.m_VBO[i]); // generate a 'name' for the VBO
+			glGenBuffers(1, &model.m_NBO[i]); // generate a 'name' for the NBO
+			glGenBuffers(1, &model.m_IBO[i]); // generate a 'name' for the IBO
+		}
 		model.refs++;
 		this->_model = &model;
 	}
