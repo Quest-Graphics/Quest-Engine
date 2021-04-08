@@ -3,6 +3,8 @@
 #include <iostream>
 
 #include "tiny_obj_loader.h"
+#include <GL/glew.h>
+#include <glm/glm.hpp>
 
 typedef long entity_id_t;
 
@@ -12,6 +14,9 @@ struct Model
 	struct tinyobj::attrib_t attributes;
 	std::vector<struct tinyobj::shape_t> shapes;
 	std::vector<struct tinyobj::material_t> materials;
+	std::vector<GLuint> m_VBO;		// vertex buffer IDs, each corresponding to a shape
+	std::vector<GLuint> m_NBO;		// normal buffer IDs, each corresponding to a shape
+	std::vector<GLuint> m_IBO;		// index buffer IDs, each corresponding to a shape
 	bool loaded = false;
 	unsigned int refs = 0;
 };
@@ -103,5 +108,24 @@ public:
 
 		model.refs++;
 		this->_model = &model;
+	}
+
+	void updateBuffers()
+	{
+		for (int i = 0; i < this->_model->shapes.size(); i++) 
+		{
+			// Tell OpenGL which VBO you want to work on right now
+			glBindBuffer(GL_ARRAY_BUFFER, this->_model->m_VBO[i]);
+			// Fillthe VBO with vertex data.
+			glBufferData(GL_ARRAY_BUFFER, this->_model->attributes.vertices.size() * sizeof(float), &this->_model->attributes.vertices[0], GL_STATIC_DRAW);
+			// Tell OpenGL which VBO you want to work on right now
+			glBindBuffer(GL_ARRAY_BUFFER, this->_model->m_NBO[i]);
+			// Fillthe VBO with vertex data.
+			glBufferData(GL_ARRAY_BUFFER, this->_model->attributes.normals.size() * sizeof(float), &this->_model->attributes.normals[0], GL_STATIC_DRAW);
+			// Bind ibo to the index buffer.
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->_model->m_IBO[i]);
+			// Fill index buffer with index data.
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->_model->shapes[i].mesh.indices.size() * sizeof(unsigned int), &this->_model->shapes[i].mesh.indices[0], GL_STATIC_DRAW);
+		}
 	}
 };
