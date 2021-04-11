@@ -4,7 +4,8 @@ By: Ian Solis
 QUEST_ENGINE
 *************/
 
-#include <glad/glad.h>
+#include <GL/glew.h>
+#include <GL/freeglut.h>
 
 #include <string>
 #include <fstream>
