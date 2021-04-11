@@ -16,6 +16,9 @@ QUEST_ENGINE
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+constexpr int ATTRLOC_vertexPosition = 0;
+constexpr int ATTRLOC_vertexNormal = 1;
+
 class Shader
 {
 public:

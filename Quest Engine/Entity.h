@@ -48,7 +48,7 @@ public:
 		if (_model)
 		{
 			_model->render(view, _shader);
-			checkError();
+			checkError(("Entity(" + std::to_string(_id) + ")::render").c_str());
 		}
 	}
 

@@ -18,21 +18,6 @@ Level* level = nullptr;
 Player* player = nullptr;
 Overlay* overlay = nullptr;
 
-/**
- * Allocate space for our data in graphics card memory
- */
-void initBuffers() {
-	checkError();
-}
-
-void initTextures() {
-	checkError();
-}
-
-void initShaders() {
-	checkError();
-}
-
 void initRendering() {
 	glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
 	checkError();
@@ -117,9 +102,6 @@ int main(int argc, char* argv[]) {
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow("Dungeon Quest");
 	glewInit();
-	initTextures();
-	initBuffers();
-	initShaders();
 	initRendering();
 
 	// Register event handlers

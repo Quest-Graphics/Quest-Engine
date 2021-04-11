@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Camera.h"
+#include "util.h"
 
 struct Model
 {
@@ -24,20 +25,21 @@ struct Model
 
 		for (int i = 0; i < shapes.size(); i++) {
 			// VBO
-			auto vertexPositionAttrib = glGetAttribLocation(shader->programID, "vertex position");
 			glBindBuffer(GL_ARRAY_BUFFER, m_VBO[i]);
-			glEnableVertexAttribArray(vertexPositionAttrib);
-			glVertexAttribPointer(vertexPositionAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(ATTRLOC_vertexPosition, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
+			checkError("Model::render/VBO");
 
 			// NBO
-			auto vertexNormalAttrib = glGetAttribLocation(shader->programID, "vertex normal");
 			glBindBuffer(GL_ARRAY_BUFFER, m_NBO[i]);
-			glEnableVertexAttribArray(vertexNormalAttrib);
-			glVertexAttribPointer(vertexNormalAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(ATTRLOC_vertexNormal, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
+			checkError("Model::render/NBO");
 
 			// IBO
 			glBindBuffer(GL_ARRAY_BUFFER, m_IBO[i]);
 			glDrawElements(GL_TRIANGLES, shapes[i].mesh.indices.size(), GL_UNSIGNED_INT, 0);
+			checkError("Model::render/IBO");
 		}
 	}
 };
