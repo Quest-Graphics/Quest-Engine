@@ -1,25 +1,12 @@
 #pragma once
 
-#include <iostream>
-
 #include "tiny_obj_loader.h"
 #include <GL/glew.h>
 #include <glm/glm.hpp>
+#include "Shader.h"
+#include "Model.h"
 
 typedef long entity_id_t;
-
-struct Model
-{
-	std::string file;
-	struct tinyobj::attrib_t attributes;
-	std::vector<struct tinyobj::shape_t> shapes;
-	std::vector<struct tinyobj::material_t> materials;
-	std::vector<GLuint> m_VBO;		// vertex buffer IDs, each corresponding to a shape
-	std::vector<GLuint> m_NBO;		// normal buffer IDs, each corresponding to a shape
-	std::vector<GLuint> m_IBO;		// index buffer IDs, each corresponding to a shape
-	bool loaded = false;
-	unsigned int refs = 0;
-};
 
 static std::map<std::string, Model> modelCache;
 static entity_id_t currentId = 0;
@@ -28,9 +15,10 @@ class Entity {
 private:
 	entity_id_t _id;
 	Model* _model = nullptr;
+	Shader* _shader = nullptr;
 
 public:
-	Entity(std::string initialModelFile = "")
+	Entity(Shader* shader, std::string initialModelFile = "")
 	{
 		_id = ++currentId;
 
@@ -38,6 +26,8 @@ public:
 		{
 			setModel(initialModelFile);
 		}
+
+		_shader = shader;
 	}
 
 	~Entity()
@@ -53,11 +43,11 @@ public:
 		return _id;
 	}
 
-	void render()
+	void render(struct CameraView* view)
 	{
 		if (_model)
 		{
-			// TODO: render model
+			_model->render(view, _shader);
 		}
 	}
 
@@ -120,7 +110,7 @@ public:
 
 	void updateBuffers()
 	{
-		for (int i = 0; i < this->_model->shapes.size(); i++) 
+		for (int i = 0; i < this->_model->shapes.size(); i++)
 		{
 			// Tell OpenGL which VBO you want to work on right now
 			glBindBuffer(GL_ARRAY_BUFFER, this->_model->m_VBO[i]);

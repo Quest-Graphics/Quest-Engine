@@ -11,11 +11,11 @@ public:
 		return "Unnamed Level";
 	}
 
-	void render()
+	void render(struct CameraView* view)
 	{
-		for (auto &entity : entities)
+		for (auto& entity : entities)
 		{
-			entity.second->render();
+			entity.second->render(view);
 		}
 	}
 

@@ -6,12 +6,14 @@
 
 #include "util.h"
 
+#include "Camera.h"
 #include "Level.h"
 #include "Player.h"
 #include "Overlay.h"
 
 #include "DemoLevel.h"
 
+Camera* camera = nullptr;
 Level* level = nullptr;
 Player* player = nullptr;
 Overlay* overlay = nullptr;
@@ -45,14 +47,16 @@ void onDisplay() {
 	}
 	else
 	{
+		auto view = camera->view();
+
 		if (level)
 		{
-			level->render();
+			level->render(&view);
 		}
 
 		if (player)
 		{
-			player->render();
+			player->render(&view);
 		}
 	}
 
@@ -131,6 +135,7 @@ int main(int argc, char* argv[]) {
 	player->setModel("PLAYER1.obj");
 
 	// Run game
+	camera = new Camera();
 	level = new DemoLevel();
 
 	// Enter the main loop
