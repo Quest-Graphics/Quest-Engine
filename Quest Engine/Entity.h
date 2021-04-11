@@ -61,6 +61,10 @@ public:
 	 */
 	void setModel(std::string objectFile)
 	{
+		if (_model) {
+			_model->refs--;
+		}
+
 		Model& model = modelCache[objectFile];
 
 		if (!model.loaded)
@@ -105,8 +109,10 @@ public:
 			glGenBuffers(1, &model.m_NBO[i]); // generate a 'name' for the NBO
 			glGenBuffers(1, &model.m_IBO[i]); // generate a 'name' for the IBO
 		}
+
 		model.refs++;
 		this->_model = &model;
+		updateBuffers();
 	}
 
 	void updateBuffers()
