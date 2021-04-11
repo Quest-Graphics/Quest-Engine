@@ -130,8 +130,11 @@ int main(int argc, char* argv[]) {
 	glutSpecialFunc(onSpecialInput);
 	checkError("main/event");
 
+	// Create shaders
+	Shader* playerShader = new Shader("Shaders/simpleModelVert.shader", "Shaders/simpleModelFrag.shader");
+
 	// Create main player
-	player = new Player();
+	player = new Player(playerShader);
 	player->setModel("PLAYER1.obj");
 
 	// Run game

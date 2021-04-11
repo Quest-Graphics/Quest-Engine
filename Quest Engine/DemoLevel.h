@@ -8,9 +8,11 @@ class DemoLevel : public Level
 public:
 	DemoLevel()
 	{
+		Shader* sceneShader = new Shader("Shaders/simpleModelVert.shader", "Shaders/simpleModelFrag.shader");
+
 		for (auto i = 0; i < 5; i++)
 		{
-			addEntity(new Scene("STAGE1.obj"));
+			addEntity(new Scene(sceneShader, "STAGE1.obj"));
 		}
 	}
 

@@ -48,6 +48,7 @@ public:
 		if (_model)
 		{
 			_model->render(view, _shader);
+			checkError();
 		}
 	}
 
