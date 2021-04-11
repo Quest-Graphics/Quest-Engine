@@ -4,9 +4,14 @@
 
 #include "Entity.h"
 
+static Shader* playerShader = new Shader();
+
 class Player : public Entity
 {
 public:
+	Player() : Entity(playerShader) {
+	}
+
 	void onKeyboard(unsigned char key, int x, int y)
 	{
 		switch (key) {

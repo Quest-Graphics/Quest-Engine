@@ -24,14 +24,16 @@ struct Model
 
 		for (int i = 0; i < shapes.size(); i++) {
 			// VBO
+			auto vertexPositionAttrib = glGetAttribLocation(shader->programID, "vertex position");
 			glBindBuffer(GL_ARRAY_BUFFER, m_VBO[i]);
-			glEnableVertexAttribArray((*shader)["vertexPosition"]);
-			glVertexAttribPointer((*shader)["vertexPosition"], 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
+			glEnableVertexAttribArray(vertexPositionAttrib);
+			glVertexAttribPointer(vertexPositionAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
 
 			// NBO
+			auto vertexNormalAttrib = glGetAttribLocation(shader->programID, "vertex normal");
 			glBindBuffer(GL_ARRAY_BUFFER, m_NBO[i]);
-			glEnableVertexAttribArray((*shader)["vertexNormal"]);
-			glVertexAttribPointer((*shader)["vertexNormal"], 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
+			glEnableVertexAttribArray(vertexNormalAttrib);
+			glVertexAttribPointer(vertexNormalAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
 
 			// IBO
 			glBindBuffer(GL_ARRAY_BUFFER, m_IBO[i]);
