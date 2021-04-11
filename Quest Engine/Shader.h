@@ -31,6 +31,8 @@ public:
 
 	//use this shader
 	void use();
+	//stop using the shader
+	void unuse();
 
 	//utility functions, set uniforms
 	//scalars

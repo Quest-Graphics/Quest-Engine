@@ -14,7 +14,6 @@ VERTEX -> GEOMETRY -> FRAGMENT
 //Can add shaders later
 Shader::Shader()
 {
-	programID = glCreateProgram();
 }
 
 //vertex and fragment only
@@ -148,6 +147,11 @@ void Shader::checkCompileErrors(unsigned int shaderID, std::string type)
 void Shader::use()
 {
 	glUseProgram(programID);
+}
+
+void Shader::unuse()
+{
+	glUseProgram(0);
 }
 
 //set uniforms
