@@ -6,6 +6,14 @@
 
 class Level {
 public:
+	~Level()
+	{
+		for (std::map<entity_id_t, Entity*>::iterator i = entities.begin(); i != entities.end(); i++)
+		{
+			delete i->second;
+		}
+	}
+
 	virtual std::string name()
 	{
 		return "Unnamed Level";

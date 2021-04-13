@@ -12,18 +12,20 @@ class Camera
 {
 public:
 	Camera() {
-		position = glm::vec3(0.0f, 0.0f, 0.0f);
-		projection = glm::perspective(45.0f, 1.0f, 1.0f, 1000.0f);
+		position = glm::vec3(100.0f, 100.0f, 100.0f);
 	}
 
 	struct CameraView view() {
 		return {
-			glm::mat4(1.0f),
+			glm::lookAt(position, center, up),
 			projection,
 		};
 	}
 
 protected:
+	const glm::vec3 center = glm::vec3(0.0f, 0.0f, 0.0f);
+	const glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+	const glm::mat4 projection = glm::perspective(10.0f, 1.0f, 1.0f, 1000.0f);
+
 	glm::vec3 position;
-	glm::mat4 projection;
 };
