@@ -43,11 +43,11 @@ public:
 		return _id;
 	}
 
-	void render(struct CameraView* view)
+	void render(glm::mat4* view, glm::mat4* projection)
 	{
 		if (_model)
 		{
-			_model->render(view, _shader);
+			_model->render(view, projection, _shader);
 			checkError(("Entity(" + std::to_string(_id) + ")::render").c_str());
 		}
 	}

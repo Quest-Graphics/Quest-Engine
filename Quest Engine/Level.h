@@ -19,11 +19,11 @@ public:
 		return "Unnamed Level";
 	}
 
-	void render(struct CameraView* view)
+	void render(glm::mat4* view, glm::mat4 * projection)
 	{
 		for (auto& entity : entities)
 		{
-			entity.second->render(view);
+			entity.second->render(view, projection);
 		}
 	}
 

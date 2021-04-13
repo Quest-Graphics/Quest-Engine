@@ -15,12 +15,12 @@ struct Model
 	bool loaded = false;
 	unsigned int refs = 0;
 
-	void render(struct CameraView* view, Shader* shader)
+	void render(glm::mat4 * view, glm::mat4 * projection, Shader* shader)
 	{
 		shader->use();
 
-		shader->setMat4("projection", view->projection);
-		shader->setMat4("modelView", view->view);
+		shader->setMat4("projection", *projection);
+		shader->setMat4("modelView", *view);
 		//shader->setVec4("lightPosition", glm::vec4(1.0, 0.0, 0.0, 1.0));
 
 		for (int i = 0; i < shapes.size(); i++) {

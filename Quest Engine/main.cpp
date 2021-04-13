@@ -13,10 +13,14 @@
 
 #include "DemoLevel.h"
 
+const glm::vec2 viewport = glm::vec2(1024, 768);
+
 Camera* camera = nullptr;
 Level* level = nullptr;
 Player* player = nullptr;
 Overlay* overlay = nullptr;
+
+static float deltaTime = 0;
 
 void initRendering() {
 	glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
@@ -24,6 +28,11 @@ void initRendering() {
 }
 
 void onDisplay() {
+	static float lastFrame = 0;
+	float currentFrame = float(glutGet(GLUT_ELAPSED_TIME)) / 1000.0f;
+	deltaTime = currentFrame - lastFrame;
+	lastFrame = currentFrame;
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	if (overlay)
@@ -32,16 +41,17 @@ void onDisplay() {
 	}
 	else
 	{
-		auto view = camera->view();
+		auto view = camera->viewMatrix();
+		auto projection = glm::perspective(camera->m_fov, viewport.x, viewport.y, 1000.0f);
 
 		if (level)
 		{
-			level->render(&view);
+			level->render(&view, &projection);
 		}
 
 		if (player)
 		{
-			player->render(&view);
+			player->render(&view, &projection);
 		}
 	}
 
@@ -68,28 +78,30 @@ void onKeyboard(unsigned char key, int x, int y) {
 		// An overlay is shown, so send this keyboard event to it
 		overlay->onKeyboard(key, x, y);
 	}
-	else if (player) {
-		// The player will handle this keyboard event
-		player->onKeyboard(key, x, y);
-	}
 	else {
-		fprintf(stderr, "Unhandled keyboard event: (%c, %d, %d)\n", key, x, y);
+		camera->onKeyboard(key, deltaTime);
+
+		if (player) {
+			player->onKeyboard(key, x, y);
+		}
 	}
 
 	checkError();
 }
 
 void onSpecialInput(int key, int x, int y) {
+
+
 	if (overlay) {
 		// An overlay is shown, so send this special input event to it
 		overlay->onSpecialInput(key, x, y);
 	}
-	else if (player) {
-		// The player will handle this special input event
-		player->onSpecialInput(key, x, y);
-	}
 	else {
-		fprintf(stderr, "Unhandled special input event: (%c, %d, %d)\n", key, x, y);
+		camera->onSpecialInput(key, deltaTime);
+
+		if (player) {
+			player->onSpecialInput(key, x, y);
+		}
 	}
 
 	checkError();
@@ -98,7 +110,7 @@ void onSpecialInput(int key, int x, int y) {
 int main(int argc, char* argv[]) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-	glutInitWindowSize(1024, 768);
+	glutInitWindowSize(viewport.x, viewport.y);
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow("Dungeon Quest");
 	glewInit();
