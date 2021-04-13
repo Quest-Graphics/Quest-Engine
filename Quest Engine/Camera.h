@@ -1,31 +1,32 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <glm/gtx/transform2.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
-struct CameraView {
-	glm::mat4 view;
-	glm::mat4 projection;
+enum direction {
+	UP, DOWN, LEFT, RIGHT
 };
 
 class Camera
 {
 public:
-	Camera() {
-		position = glm::vec3(100.0f, 100.0f, 100.0f);
-	}
+	Camera();
+	Camera(glm::vec3 position, glm::vec3 forward, glm::vec3 up, glm::vec3 right, float fov, float sensitivity, float mvmtSpeed);
 
-	struct CameraView view() {
-		return {
-			glm::lookAt(position, center, up),
-			projection,
-		};
-	}
+	float m_sensitivity = 0.1f;
+	float m_mvmtSpeed = 2.0f;
 
-protected:
-	const glm::vec3 center = glm::vec3(0.0f, 0.0f, 0.0f);
-	const glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-	const glm::mat4 projection = glm::perspective(10.0f, 1.0f, 1.0f, 1000.0f);
+	float m_pitch = 0.0f; //vertical rotation angle
+	float m_yaw = -90.0f; //horizontal rotation angle
+	float m_fov = 45.0; //field of vision
+	
+	glm::vec3 m_position;
+	glm::vec3 m_forward;
+	glm::vec3 m_up;
+	glm::vec3 m_right;
 
-	glm::vec3 position;
+	glm::mat4 viewMatrix();
+	void moveCamera(direction dir, float deltaTime);
+	void keyRotate(direction dir, float deltaTime);
+	void mouseRotate(float deltaX, float deltaY, float deltaTime);
 };
