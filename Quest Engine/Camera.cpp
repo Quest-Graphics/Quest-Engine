@@ -63,7 +63,7 @@ void Camera::keyRotate(direction dir, float deltaTime)
 	case UP:
 		if(m_pitch + stepSize >= 90)
 			m_pitch += stepSize;
-		rotate = glm::rotate(rotate, stepSize, m_right);
+		rotate = glm::rotate(rotate, -stepSize, m_right);
 
 		m_forward = glm::vec3(glm::vec4(m_forward, 1.0f) * rotate);
 		m_up = glm::vec3(glm::vec4(m_up, 1.0f) * rotate);
@@ -72,7 +72,7 @@ void Camera::keyRotate(direction dir, float deltaTime)
 	case DOWN:
 		if(m_pitch + stepSize <= 90)
 			m_pitch -= stepSize;
-		rotate = glm::rotate(rotate, -stepSize, m_right);
+		rotate = glm::rotate(rotate, stepSize, m_right);
 
 		m_forward = glm::vec3(glm::vec4(m_forward, 1.0f) * rotate);
 		m_up = glm::vec3(glm::vec4(m_up, 1.0f) * rotate);
@@ -80,7 +80,7 @@ void Camera::keyRotate(direction dir, float deltaTime)
 
 	case LEFT:
 		m_yaw += stepSize;
-		rotate = glm::rotate(rotate, stepSize, m_up);
+		rotate = glm::rotate(rotate, -stepSize, m_up);
 
 		m_forward = glm::vec3(glm::vec4(m_forward, 1.0f) * rotate);
 		m_right = glm::vec3(glm::vec4(m_right, 1.0f) * rotate);
@@ -88,7 +88,7 @@ void Camera::keyRotate(direction dir, float deltaTime)
 
 	case RIGHT:
 		m_yaw -= stepSize;
-		rotate = glm::rotate(rotate, -stepSize, m_up);
+		rotate = glm::rotate(rotate, stepSize, m_up);
 
 		m_forward = glm::vec3(glm::vec4(m_forward, 1.0f) * rotate);
 		m_right = glm::vec3(glm::vec4(m_right, 1.0f) * rotate);
