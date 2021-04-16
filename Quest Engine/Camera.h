@@ -15,7 +15,7 @@ public:
 	Camera(glm::vec3 position, glm::vec3 forward, glm::vec3 up, glm::vec3 right, float fov, float sensitivity, float mvmtSpeed);
 
 	float m_sensitivity = 1.0f;
-	float m_mvmtSpeed = 2.0f;
+	float m_mvmtSpeed = 10.0f;
 
 	float m_pitch = 0.0f; //vertical rotation angle
 	float m_yaw = -90.0f; //horizontal rotation angle

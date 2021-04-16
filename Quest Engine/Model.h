@@ -26,13 +26,13 @@ struct Model
 		for (int i = 0; i < shapes.size(); i++) {
 			// VBO
 			glBindBuffer(GL_ARRAY_BUFFER, m_VBO[i]);
-			glEnableVertexAttribArray(0);
+			glEnableVertexAttribArray(ATTRLOC_vertexPosition);
 			glVertexAttribPointer(ATTRLOC_vertexPosition, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
 			checkError("Model::render/VBO");
 
 			// NBO
 			glBindBuffer(GL_ARRAY_BUFFER, m_NBO[i]);
-			glEnableVertexAttribArray(1);
+			glEnableVertexAttribArray(ATTRLOC_vertexNormal);
 			glVertexAttribPointer(ATTRLOC_vertexNormal, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
 			checkError("Model::render/NBO");
 
@@ -41,5 +41,7 @@ struct Model
 			glDrawElements(GL_TRIANGLES, shapes[i].mesh.indices.size(), GL_UNSIGNED_INT, 0);
 			checkError("Model::render/IBO");
 		}
+
+		shader->unuse();
 	}
 };

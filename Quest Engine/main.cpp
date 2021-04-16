@@ -24,6 +24,7 @@ static float deltaTime = 0;
 
 void initRendering() {
 	glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
+	glEnable(GL_DEPTH_TEST);
 	checkError();
 }
 
@@ -42,7 +43,7 @@ void onDisplay() {
 	else
 	{
 		auto view = camera->viewMatrix();
-		auto projection = glm::perspective(camera->m_fov, viewport.x, viewport.y, 1000.0f);
+		auto projection = glm::perspective(camera->m_fov, viewport.x / viewport.y, 1.0f, 1000.0f);
 
 		if (level)
 		{

@@ -35,7 +35,7 @@ void Camera::moveCamera(direction dir, float deltaTime)
 	switch (dir)
 	{
 	case UP:
-		m_position +=  m_forward * stepSize;
+		m_position += m_forward * stepSize;
 		break;
 
 	case DOWN:
@@ -61,7 +61,7 @@ void Camera::keyRotate(direction dir, float deltaTime)
 	switch (dir)
 	{
 	case UP:
-		if(m_pitch + stepSize >= 90)
+		if (m_pitch + stepSize >= 90)
 			m_pitch += stepSize;
 		rotate = glm::rotate(rotate, -stepSize, m_right);
 
@@ -70,7 +70,7 @@ void Camera::keyRotate(direction dir, float deltaTime)
 		break;
 
 	case DOWN:
-		if(m_pitch + stepSize <= 90)
+		if (m_pitch + stepSize <= 90)
 			m_pitch -= stepSize;
 		rotate = glm::rotate(rotate, stepSize, m_right);
 

@@ -121,14 +121,19 @@ public:
 		{
 			// Tell OpenGL which VBO you want to work on right now
 			glBindBuffer(GL_ARRAY_BUFFER, this->_model->m_VBO[i]);
+			
 			// Fillthe VBO with vertex data.
 			glBufferData(GL_ARRAY_BUFFER, this->_model->attributes.vertices.size() * sizeof(float), &this->_model->attributes.vertices[0], GL_STATIC_DRAW);
+			
 			// Tell OpenGL which VBO you want to work on right now
 			glBindBuffer(GL_ARRAY_BUFFER, this->_model->m_NBO[i]);
+			
 			// Fillthe VBO with vertex data.
 			glBufferData(GL_ARRAY_BUFFER, this->_model->attributes.normals.size() * sizeof(float), &this->_model->attributes.normals[0], GL_STATIC_DRAW);
+			
 			// Bind ibo to the index buffer.
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->_model->m_IBO[i]);
+			
 			// Fill index buffer with index data.
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->_model->shapes[i].mesh.indices.size() * sizeof(unsigned int), &this->_model->shapes[i].mesh.indices[0], GL_STATIC_DRAW);
 		}
