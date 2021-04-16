@@ -35,7 +35,7 @@ void Camera::moveCamera(direction dir, float deltaTime)
 	switch (dir)
 	{
 	case UP:
-		m_position += m_forward * stepSize;
+		m_position +=  m_forward * stepSize;
 		break;
 
 	case DOWN:
@@ -61,8 +61,8 @@ void Camera::keyRotate(direction dir, float deltaTime)
 	switch (dir)
 	{
 	case UP:
-		if (m_pitch + stepSize >= 90)
-			m_pitch += stepSize;
+		m_pitch += stepSize;
+		if (m_pitch >= 89.0) m_pitch = 89.0;
 		rotate = glm::rotate(rotate, -stepSize, m_right);
 
 		m_forward = glm::vec3(glm::vec4(m_forward, 1.0f) * rotate);
@@ -70,8 +70,8 @@ void Camera::keyRotate(direction dir, float deltaTime)
 		break;
 
 	case DOWN:
-		if (m_pitch + stepSize <= 90)
-			m_pitch -= stepSize;
+		m_pitch -= stepSize;
+		if (m_pitch <= -89.0) m_pitch = -89.0;
 		rotate = glm::rotate(rotate, stepSize, m_right);
 
 		m_forward = glm::vec3(glm::vec4(m_forward, 1.0f) * rotate);
@@ -105,4 +105,40 @@ void Camera::keyRotate(direction dir, float deltaTime)
 void Camera::mouseRotate(float deltaX, float deltaY, float deltaTime)
 {
 
+}
+
+
+//leaves camera in the same position, turns it towards target
+void Camera::lookAt(glm::vec3 target)
+{
+	//reset camera vectors
+	m_forward = glm::vec3(0.0f, 0.0f, -1.0f);
+	m_up = glm::vec3(0.0f, 1.0f, 0.0f);
+	m_right = glm::vec3(1.0f, 0.0f, 0.0f);
+
+	//direction camera will be looking at
+	glm::vec3 targetDir = glm::normalize(target - m_position);
+
+	//used to calculate pitch and yaw
+	glm::vec3 targetRef = glm::vec3(targetDir.x, 0.0f, targetDir.z);
+	glm::vec3 forwardRef = glm::vec3(m_forward.x, 0.0f, m_forward.z);
+
+	//rotates the camera horizontally
+	m_yaw = acos(glm::dot(glm::normalize(targetRef),glm::normalize(forwardRef)));
+
+	glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), m_yaw, glm::vec3(0.0f, 1.0f, 0.0f));
+
+	m_forward = glm::vec3(glm::vec4(m_forward, 1.0f) * rotate);
+	m_right = glm::vec3(glm::vec4(m_right, 1.0f) * rotate);
+
+	//rotates camera vertically
+	m_pitch = acos(glm::dot(glm::normalize(m_forward), glm::normalize(targetDir)));
+
+	if (m_pitch >= 89.0f) m_pitch = 89.0f;
+	if (m_pitch <= -89.0f) m_pitch = -89.0f;
+
+	rotate = glm::rotate(glm::mat4(1.0f), m_pitch, m_right);
+
+	m_forward = glm::vec3(glm::vec4(m_forward, 1.0f) * rotate);
+	m_up = glm::vec3(glm::vec4(m_up, 1.0f) * rotate);
 }
