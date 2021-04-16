@@ -1,63 +1,100 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+
 #include <glm/glm.hpp>
+#include <glm/ext.hpp>
 
 #include <string>
+#include <iostream>
 
 #include "util.h"
 
-#include "Camera.h"
 #include "Level.h"
 #include "Player.h"
 #include "Overlay.h"
 
 #include "DemoLevel.h"
+#include "Shader.h"
+#include "Camera.h"
 
-const glm::vec2 viewport = glm::vec2(1024, 768);
-
-Camera* camera = nullptr;
 Level* level = nullptr;
 Player* player = nullptr;
 Overlay* overlay = nullptr;
 
-static float deltaTime = 0;
+
+unsigned int VBO, VAO, EBO;
+Shader shader;
+
+float lastFrame = 0.0f;
+float deltaTime = 0.0f;
+Camera cam1;
+
+
+/**
+ * Allocate space for our data in graphics card memory
+ */
+void initBuffers() {
+	float vertices[] = {
+	 0.5f,  0.5f, -100.0f,  // top right
+	-0.5f, -0.5f, -100.0f,  // bottom left
+	 0.5f, -0.5f, -100.0f,  // bottom right
+	-0.5f,  0.5f, -100.0f   // top left 
+	};
+
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+	glBindVertexArray(VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	int vertexPos = 0;
+	glVertexAttribPointer(vertexPos, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	checkError();
+}
+
+void initTextures() {
+	checkError();
+}
+
+void initShaders() {
+	shader = Shader("vert.shader", "frag.shader");
+	checkError();
+}
 
 void initRendering() {
-	glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
-	glEnable(GL_DEPTH_TEST);
 	checkError();
 }
 
 void onDisplay() {
-	static float lastFrame = 0;
-	float currentFrame = float(glutGet(GLUT_ELAPSED_TIME)) / 1000.0f;
+
+	float currentFrame = float(glutGet(GLUT_ELAPSED_TIME)) / 1000.0;
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
 
+	glClearColor(0.0f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	if (overlay)
-	{
-		overlay->render();
-	}
-	else
-	{
-		auto view = camera->viewMatrix();
-		auto projection = glm::perspective(camera->m_fov, viewport.x / viewport.y, 1.0f, 1000.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(cam1.m_fov), float(1024) / float(768), 0.01f, 1000.0f);
+	glm::mat4 model = glm::mat4(1.0f);
+	glm::mat4 view = cam1.viewMatrix();
 
-		if (level)
-		{
-			level->render(&view, &projection);
-		}
+	shader.use();
+	shader.setMat4("Model", model);
+	shader.setMat4("View", view);
+	shader.setMat4("Projection", projection);
 
-		if (player)
-		{
-			player->render(&view, &projection);
-		}
-	}
+	glBindVertexArray(VAO);
+	glDrawArrays(GL_TRIANGLES, 0, 3);
 
 	glutSwapBuffers();
-	checkError();
+	checkError("Display");
 }
 
 void onIdle() {
@@ -75,46 +112,56 @@ void onReshape(int w, int h) {
 }
 
 void onKeyboard(unsigned char key, int x, int y) {
-	if (overlay) {
-		// An overlay is shown, so send this keyboard event to it
-		overlay->onKeyboard(key, x, y);
+	switch (key)
+	{
+	case 27:
+		exit(0);
+	case 'w': case 'W':
+		cam1.moveCamera(UP, deltaTime);
+		break;
+	case 's': case 'S':
+		cam1.moveCamera(DOWN, deltaTime);
+		break;
+	case 'a': case 'A':
+		cam1.moveCamera(LEFT, deltaTime);
+		break;
+	case 'd': case 'D':
+		cam1.moveCamera(RIGHT, deltaTime);
+		break;
+	case 'c': case 'C':
+		cam1.lookAt(glm::vec3(0.0f, 0.0f, -100.0f));
+		break;
 	}
-	else {
-		camera->onKeyboard(key, deltaTime);
-
-		if (player) {
-			player->onKeyboard(key, x, y);
-		}
-	}
-
-	checkError();
 }
 
 void onSpecialInput(int key, int x, int y) {
-
-
-	if (overlay) {
-		// An overlay is shown, so send this special input event to it
-		overlay->onSpecialInput(key, x, y);
+	switch (key)
+	{
+	case GLUT_KEY_UP:
+		cam1.keyRotate(UP, deltaTime);
+		break;
+	case GLUT_KEY_DOWN:
+		cam1.keyRotate(DOWN, deltaTime);
+		break;
+	case GLUT_KEY_LEFT:
+		cam1.keyRotate(LEFT, deltaTime);
+		break;
+	case GLUT_KEY_RIGHT:
+		cam1.keyRotate(RIGHT, deltaTime);
+		break;
 	}
-	else {
-		camera->onSpecialInput(key, deltaTime);
-
-		if (player) {
-			player->onSpecialInput(key, x, y);
-		}
-	}
-
-	checkError();
 }
 
 int main(int argc, char* argv[]) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-	glutInitWindowSize(viewport.x, viewport.y);
+	glutInitWindowSize(1024, 768);
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow("Dungeon Quest");
 	glewInit();
+	initTextures();
+	initBuffers();
+	initShaders();
 	initRendering();
 
 	// Register event handlers
@@ -125,16 +172,15 @@ int main(int argc, char* argv[]) {
 	glutSpecialFunc(onSpecialInput);
 	checkError("main/event");
 
-	// Create shaders
-	Shader* playerShader = new Shader("Shaders/simpleModelVert.shader", "Shaders/simpleModelFrag.shader");
 
+	/*
 	// Create main player
-	player = new Player(playerShader);
+	player = new Player();
 	player->setModel("PLAYER1.obj");
 
 	// Run game
-	camera = new Camera();
 	level = new DemoLevel();
+	*/
 
 	// Enter the main loop
 	glutMainLoop();
