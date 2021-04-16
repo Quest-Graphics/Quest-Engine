@@ -80,7 +80,31 @@ void onKeyboard(unsigned char key, int x, int y) {
 		overlay->onKeyboard(key, x, y);
 	}
 	else {
-		camera->onKeyboard(key, deltaTime);
+		switch (key) {
+		case 27:
+			exit(0);
+			break;
+		case 'w':
+		case 'W':
+			camera->moveCamera(UP, deltaTime);
+			break;
+		case 's':
+		case 'S':
+			camera->moveCamera(DOWN, deltaTime);
+			break;
+		case 'a':
+		case 'A':
+			camera->moveCamera(LEFT, deltaTime);
+			break;
+		case 'd':
+		case 'D':
+			camera->moveCamera(RIGHT, deltaTime);
+			break;
+		case 'c':
+		case 'C':
+			camera->lookAt(glm::vec3(0.0f, 0.0f, -100.0f));
+			break;
+		}
 
 		if (player) {
 			player->onKeyboard(key, x, y);
@@ -91,14 +115,26 @@ void onKeyboard(unsigned char key, int x, int y) {
 }
 
 void onSpecialInput(int key, int x, int y) {
-
-
 	if (overlay) {
 		// An overlay is shown, so send this special input event to it
 		overlay->onSpecialInput(key, x, y);
 	}
 	else {
-		camera->onSpecialInput(key, deltaTime);
+		switch (key)
+		{
+		case GLUT_KEY_UP:
+			camera->keyRotate(UP, deltaTime);
+			break;
+		case GLUT_KEY_DOWN:
+			camera->keyRotate(DOWN, deltaTime);
+			break;
+		case GLUT_KEY_LEFT:
+			camera->keyRotate(LEFT, deltaTime);
+			break;
+		case GLUT_KEY_RIGHT:
+			camera->keyRotate(RIGHT, deltaTime);
+			break;
+		}
 
 		if (player) {
 			player->onSpecialInput(key, x, y);
