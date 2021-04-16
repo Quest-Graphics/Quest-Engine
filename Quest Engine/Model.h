@@ -1,47 +1,37 @@
 #pragma once
 
 #include "Camera.h"
+#include "Shader.h"
 #include "util.h"
+#include <vector>
+#include <map>
+#include "tiny_obj_loader.h"
 
 struct Model
 {
+	static Model* getOrLoad(std::string name);
+
 	std::string file;
+	bool loaded = false;
+	
 	struct tinyobj::attrib_t attributes;
 	std::vector<struct tinyobj::shape_t> shapes;
 	std::vector<struct tinyobj::material_t> materials;
-	std::vector<GLuint> m_VBO;		// vertex buffer IDs, each corresponding to a shape
-	std::vector<GLuint> m_NBO;		// normal buffer IDs, each corresponding to a shape
-	std::vector<GLuint> m_IBO;		// index buffer IDs, each corresponding to a shape
-	bool loaded = false;
-	unsigned int refs = 0;
+	
+	GLuint vbo, nbo;
+	std::vector<GLuint> m_IBO;	// index buffer IDs, each corresponding to a shape
 
-	void render(glm::mat4 * view, glm::mat4 * projection, Shader* shader)
-	{
-		shader->use();
+	/**
+	* Load this model into the GPU's buffers.
+	*/
+	void buffer();
 
-		shader->setMat4("projection", *projection);
-		shader->setMat4("modelView", *view);
-		//shader->setVec4("lightPosition", glm::vec4(1.0, 0.0, 0.0, 1.0));
+	/**
+	* Render this model to the screen.
+	* buffer() must have been called previously if another model was rendered last.
+	*/
+	void render(glm::mat4* view, glm::mat4* projection, Shader* shader);
 
-		for (int i = 0; i < shapes.size(); i++) {
-			// VBO
-			glBindBuffer(GL_ARRAY_BUFFER, m_VBO[i]);
-			glEnableVertexAttribArray(ATTRLOC_vertexPosition);
-			glVertexAttribPointer(ATTRLOC_vertexPosition, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
-			checkError("Model::render/VBO");
-
-			// NBO
-			glBindBuffer(GL_ARRAY_BUFFER, m_NBO[i]);
-			glEnableVertexAttribArray(ATTRLOC_vertexNormal);
-			glVertexAttribPointer(ATTRLOC_vertexNormal, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
-			checkError("Model::render/NBO");
-
-			// IBO
-			glBindBuffer(GL_ARRAY_BUFFER, m_IBO[i]);
-			glDrawElements(GL_TRIANGLES, shapes[i].mesh.indices.size(), GL_UNSIGNED_INT, 0);
-			checkError("Model::render/IBO");
-		}
-
-		shader->unuse();
-	}
+private:
+	static std::map<std::string, Model> modelCache;
 };

@@ -13,12 +13,12 @@
 
 #include "DemoLevel.h"
 
-const glm::vec2 viewport = glm::vec2(1024, 768);
+const glm::ivec2 viewport = glm::ivec2(1024, 768);
 
 Camera* camera = nullptr;
 Level* level = nullptr;
 Player* player = nullptr;
-Overlay* overlay = nullptr;
+Overlay* overlay = nullptr; // For 2D UI
 
 static float deltaTime = 0;
 
@@ -43,7 +43,7 @@ void onDisplay() {
 	else
 	{
 		auto view = camera->viewMatrix();
-		auto projection = glm::perspective(camera->m_fov, viewport.x / viewport.y, 1.0f, 1000.0f);
+		auto projection = glm::perspective(camera->m_fov, (float) viewport.x / viewport.y, 1.0f, 1000.0f);
 
 		if (level)
 		{
@@ -166,11 +166,11 @@ int main(int argc, char* argv[]) {
 
 	// Create main player
 	player = new Player(playerShader);
-	player->setModel("PLAYER1.obj");
+	player->setModel("cube.obj");
 
 	// Run game
 	camera = new Camera();
-	level = new DemoLevel();
+	//level = new DemoLevel();
 
 	// Enter the main loop
 	glutMainLoop();
