@@ -166,11 +166,11 @@ int main(int argc, char* argv[]) {
 
 	// Create main player
 	player = new Player(playerShader);
-	player->setModel("cube.obj");
+	player->setModel("PLAYER1.obj");
 
 	// Run game
 	camera = new Camera();
-	//level = new DemoLevel();
+	level = new DemoLevel();
 
 	// Enter the main loop
 	glutMainLoop();

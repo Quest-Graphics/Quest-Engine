@@ -35,7 +35,7 @@ void Camera::moveCamera(direction dir, float deltaTime)
 	switch (dir)
 	{
 	case UP:
-		m_position +=  m_forward * stepSize;
+		m_position += m_forward * stepSize;
 		break;
 
 	case DOWN:
@@ -124,7 +124,7 @@ void Camera::lookAt(glm::vec3 target)
 	glm::vec3 forwardRef = glm::vec3(m_forward.x, 0.0f, m_forward.z);
 
 	//rotates the camera horizontally
-	m_yaw = acos(glm::dot(glm::normalize(targetRef),glm::normalize(forwardRef)));
+	m_yaw = acos(glm::dot(glm::normalize(targetRef), glm::normalize(forwardRef)));
 
 	glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), m_yaw, glm::vec3(0.0f, 1.0f, 0.0f));
 

@@ -13,12 +13,11 @@ struct Model
 
 	std::string file;
 	bool loaded = false;
-	
-	struct tinyobj::attrib_t attributes;
-	std::vector<struct tinyobj::shape_t> shapes;
-	std::vector<struct tinyobj::material_t> materials;
-	
-	GLuint vbo, nbo;
+
+	std::vector<tinyobj::shape_t> shapes;
+
+	std::vector<GLuint> m_VBO;	// vertex buffer IDs, each corresponding to a shape
+	std::vector<GLuint> m_NBO;	// normal buffer IDs, each corresponding to a shape
 	std::vector<GLuint> m_IBO;	// index buffer IDs, each corresponding to a shape
 
 	/**

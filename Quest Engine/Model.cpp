@@ -8,25 +8,11 @@ Model* Model::getOrLoad(std::string name) {
 	if (!model.loaded)
 	{
 		std::cout << "Loading new model " << name << std::endl;
-		std::string warn, err;
-		bool success = tinyobj::LoadObj(
-			&model.attributes, &model.shapes, &model.materials, // Load output
-			&warn, &err,								        // Status output
-			("Models/" + name).c_str(), "Models"                // Input locations
-		);
-
-		if (!warn.empty())
-		{
-			std::cerr << warn << std::endl;
-		}
+		std::string err = tinyobj::LoadObj(model.shapes, ("Models/" + name).c_str(), "Models/");
 
 		if (!err.empty())
 		{
-			std::cerr << err << std::endl;
-		}
-
-		if (!success) {
-			std::cerr << "Failed to load model " << name << std::endl;
+			std::cerr << "Failed to load model " << name << ": " << err << std::endl;
 			return nullptr;
 		}
 
@@ -34,13 +20,21 @@ Model* Model::getOrLoad(std::string name) {
 		model.file = name;
 		model.loaded = true;
 
-		// Generate 'names' for the VBO and NBO
-		glGenBuffers(1, &model.vbo);
-		glGenBuffers(1, &model.nbo);
+		size_t numShapes = model.shapes.size();
 
-		// Generate 'name' for the IBOs (one per shape)
+		// Generate 'names' for the VBOs (one per shape)
+		model.m_VBO.resize(numShapes);
+		glGenBuffers(numShapes, &model.m_VBO[0]);
+
+		// Generate 'names' for the NBOs (one per shape)
+		model.m_NBO.resize(numShapes);
+		glGenBuffers(numShapes, &model.m_NBO[0]);
+
+		// Generate 'names' for the IBOs (one per shape)
 		model.m_IBO.resize(model.shapes.size());
-		glGenBuffers(model.shapes.size(), &model.m_IBO[0]);
+		glGenBuffers(numShapes, &model.m_IBO[0]);
+
+		// Load buffer object data into buffers
 		model.buffer();
 
 		// Store in cache for next time
@@ -54,24 +48,24 @@ Model* Model::getOrLoad(std::string name) {
 }
 
 void Model::buffer() {
-	std::cout << "Buffering model " << file << std::endl;
-
-	// Tell OpenGL we want to use the VBO
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	// Fill the VBO with vertex data
-	glBufferData(GL_ARRAY_BUFFER, attributes.vertices.size() * sizeof(float), &attributes.vertices[0], GL_STATIC_DRAW);
-
-	// Tell OpenGL we want to use the NBO
-	glBindBuffer(GL_ARRAY_BUFFER, nbo);
-	// Fill the NBO with normal data
-	glBufferData(GL_ARRAY_BUFFER, attributes.normals.size() * sizeof(float), &attributes.normals[0], GL_STATIC_DRAW);
-
 	for (size_t i = 0; i < shapes.size(); i++)
 	{	
+		tinyobj::mesh_t * mesh = &shapes[i].mesh;
+
+		// Tell OpenGL we want to use the VBO for this shape
+		glBindBuffer(GL_ARRAY_BUFFER, m_VBO[i]);
+		// Fill the VBO with vertex data
+		glBufferData(GL_ARRAY_BUFFER, mesh->positions.size() * sizeof(float), &mesh->positions[0], GL_STATIC_DRAW);
+
+		// Tell OpenGL we want to use the NBO for this shape
+		glBindBuffer(GL_ARRAY_BUFFER, m_NBO[i]);
+		// Fill the NBO with normal data
+		glBufferData(GL_ARRAY_BUFFER, mesh->normals.size() * sizeof(float), &mesh->normals[0], GL_STATIC_DRAW);
+
 		// Tell OpenGL we want to use the IBO for this shape
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO[i]);
 		// Fill IBO with index data for this shape
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, shapes[i].mesh.indices.size() * sizeof(unsigned int), &shapes[i].mesh.indices[0], GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->indices.size() * sizeof(unsigned int), &mesh->indices[0], GL_STATIC_DRAW);
 	}
 }
 
@@ -81,20 +75,20 @@ void Model::render(glm::mat4* view, glm::mat4* projection, Shader* shader) {
 	shader->setMat4("projection", *projection); // send projection to vertex shader
 	shader->setMat4("modelView", *view);		// send modelview to vertex shader
 
-	// VBO
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glEnableVertexAttribArray(ATTRLOC_vertexPosition);
-	glVertexAttribPointer(ATTRLOC_vertexPosition, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
-	checkError("Model::render/VBO");
-
-	// NBO
-	glBindBuffer(GL_ARRAY_BUFFER, nbo);
-	glEnableVertexAttribArray(ATTRLOC_vertexNormal);
-	glVertexAttribPointer(ATTRLOC_vertexNormal, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
-	checkError("Model::render/NBO");
-
-	// IBOs (one per shape)
 	for (size_t i = 0; i < shapes.size(); i++) {
+		// VBO
+		glBindBuffer(GL_ARRAY_BUFFER, m_VBO[i]);
+		glEnableVertexAttribArray(ATTRLOC_vertexPosition);
+		glVertexAttribPointer(ATTRLOC_vertexPosition, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
+		checkError("Model::render/VBO");
+
+		// NBO
+		glBindBuffer(GL_ARRAY_BUFFER, m_NBO[i]);
+		glEnableVertexAttribArray(ATTRLOC_vertexNormal);
+		glVertexAttribPointer(ATTRLOC_vertexNormal, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
+		checkError("Model::render/NBO");
+
+		// IBO
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO[i]);
 		glDrawElements(GL_TRIANGLES, shapes[i].mesh.indices.size(), GL_UNSIGNED_INT, 0);
 		checkError("Model::render/IBO");
