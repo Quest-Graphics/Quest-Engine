@@ -29,7 +29,7 @@ struct Model
 	* Render this model to the screen.
 	* buffer() must have been called previously if another model was rendered last.
 	*/
-	void render(glm::mat4* view, glm::mat4* projection, Shader* shader);
+	void render(glm::mat4 view, glm::mat4* projection, Shader* shader);
 
 private:
 	static std::map<std::string, Model> modelCache;

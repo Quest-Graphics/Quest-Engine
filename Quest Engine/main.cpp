@@ -47,12 +47,12 @@ void onDisplay() {
 
 		if (level)
 		{
-			level->render(&view, &projection);
+			level->render(view, &projection);
 		}
 
 		if (player)
 		{
-			player->render(&view, &projection);
+			player->render(view, &projection);
 		}
 	}
 

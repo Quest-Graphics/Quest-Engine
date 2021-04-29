@@ -69,11 +69,11 @@ void Model::buffer() {
 	}
 }
 
-void Model::render(glm::mat4* view, glm::mat4* projection, Shader* shader) {
+void Model::render(glm::mat4 view, glm::mat4* projection, Shader* shader) {
 	shader->use(); // Bind shader
 
 	shader->setMat4("projection", *projection); // send projection to vertex shader
-	shader->setMat4("modelView", *view);		// send modelview to vertex shader
+	shader->setMat4("modelView", view);		// send modelview to vertex shader
 
 	for (size_t i = 0; i < shapes.size(); i++) {
 		// VBO

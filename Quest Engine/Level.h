@@ -19,7 +19,7 @@ public:
 		return "Unnamed Level";
 	}
 
-	void render(glm::mat4* view, glm::mat4 * projection)
+	void render(glm::mat4 view, glm::mat4 * projection)
 	{
 		for (auto& entity : entities)
 		{

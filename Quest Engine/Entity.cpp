@@ -11,13 +11,21 @@ Entity::Entity(Shader* shader, std::string initialModelFile) {
 	}
 
 	_shader = shader;
+
+	position = glm::vec3(0.0f, 0.0f, 0.0f);
+	facing = 0;
 }
 
-void Entity::render(glm::mat4* view, glm::mat4* projection)
+entity_id_t Entity::id()
+{
+	return _id;
+}
+
+void Entity::render(glm::mat4 view, glm::mat4* projection)
 {
 	if (_model)
 	{
-		_model->render(view, projection, _shader);
+		_model->render(view * glm::translate(position) * glm::rotate(facing, AXIS_Y), projection, _shader);
 		checkError(("Entity(" + std::to_string(_id) + ")::render").c_str());
 	}
 }
