@@ -105,6 +105,8 @@
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\..\..\Downloads\22 - normal maps\22 - normal maps\TestGLProj\shaders\phong2.frag" />
+    <None Include="..\..\..\..\..\Downloads\22 - normal maps\22 - normal maps\TestGLProj\shaders\phong2.vert" />
     <None Include="Shaders\frag.shader" />
     <None Include="Shaders\multiLightsFrag.shader" />
     <None Include="Shaders\multiLightsVert.shader" />

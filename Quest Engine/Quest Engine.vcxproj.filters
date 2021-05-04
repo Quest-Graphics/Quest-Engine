@@ -100,5 +100,11 @@
     <None Include="Shaders\multiLightsVert.shader">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\..\..\..\..\Downloads\22 - normal maps\22 - normal maps\TestGLProj\shaders\phong2.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\..\..\..\Downloads\22 - normal maps\22 - normal maps\TestGLProj\shaders\phong2.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
