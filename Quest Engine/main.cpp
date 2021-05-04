@@ -162,7 +162,7 @@ int main(int argc, char* argv[]) {
 	checkError("main/event");
 
 	// Create shaders
-	Shader* playerShader = new Shader("Shaders/phong2.vert", "Shaders/phong2.frag.shader");
+	Shader* playerShader = new Shader("Shaders/simpleModelVert.shader", "Shaders/simpleModelFrag.shader");
 
 	// Create main player
 	player = new Player(playerShader);
