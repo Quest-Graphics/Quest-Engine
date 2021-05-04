@@ -105,14 +105,12 @@
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\frag.shader" />
     <None Include="Shaders\multiLightsFrag.shader" />
     <None Include="Shaders\multiLightsVert.shader" />
     <None Include="Shaders\phong2.frag" />
     <None Include="Shaders\phong2.vert" />
     <None Include="Shaders\simpleModelFrag.shader" />
     <None Include="Shaders\simpleModelVert.shader" />
-    <None Include="Shaders\vert.shader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

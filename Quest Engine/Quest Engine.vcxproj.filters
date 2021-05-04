@@ -80,21 +80,12 @@
     <ClInclude Include="Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\simpleModelFrag.shader">
       <Filter>Shaders</Filter>
     </None>
     <None Include="Shaders\simpleModelVert.shader">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\frag.shader">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\vert.shader">
       <Filter>Shaders</Filter>
     </None>
     <None Include="Shaders\multiLightsFrag.shader">
