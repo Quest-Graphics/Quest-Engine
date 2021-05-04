@@ -8,7 +8,7 @@ class DemoLevel : public Level
 public:
 	DemoLevel()
 	{
-		Shader* sceneShader = new Shader("Shaders/simpleModelVert.shader", "Shaders/simpleModelFrag.shader");
+		Shader* sceneShader = new Shader("Shaders/phong2.vert", "Shaders/phong2.frag");
 		addEntity(new Scene(sceneShader, "STAGE1.obj"));
 	}
 
