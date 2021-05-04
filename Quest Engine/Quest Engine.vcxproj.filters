@@ -88,5 +88,17 @@
     <None Include="Shaders\simpleModelVert.shader">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Shaders\frag.shader">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\vert.shader">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\multiLightsFrag.shader">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\multiLightsVert.shader">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
