@@ -86,19 +86,19 @@ void onKeyboard(unsigned char key, int x, int y) {
 			break;
 		case 'w':
 		case 'W':
-			camera->moveCamera(UP, deltaTime);
+			//camera->moveCamera(UP, deltaTime);
 			break;
 		case 's':
 		case 'S':
-			camera->moveCamera(DOWN, deltaTime);
+			//camera->moveCamera(DOWN, deltaTime);
 			break;
 		case 'a':
 		case 'A':
-			camera->moveCamera(LEFT, deltaTime);
+			//camera->moveCamera(LEFT, deltaTime);
 			break;
 		case 'd':
 		case 'D':
-			camera->moveCamera(RIGHT, deltaTime);
+			//camera->moveCamera(RIGHT, deltaTime);
 			break;
 		case 'c':
 		case 'C':
@@ -123,16 +123,20 @@ void onSpecialInput(int key, int x, int y) {
 		switch (key)
 		{
 		case GLUT_KEY_UP:
-			camera->keyRotate(UP, deltaTime);
+			camera->moveCamera(UP, deltaTime);
+			//camera->keyRotate(UP, deltaTime);
 			break;
 		case GLUT_KEY_DOWN:
-			camera->keyRotate(DOWN, deltaTime);
+			camera->moveCamera(UP, deltaTime);
+			//camera->keyRotate(DOWN, deltaTime);
 			break;
 		case GLUT_KEY_LEFT:
-			camera->keyRotate(LEFT, deltaTime);
+			camera->moveCamera(UP, deltaTime);
+			//camera->keyRotate(LEFT, deltaTime);
 			break;
 		case GLUT_KEY_RIGHT:
-			camera->keyRotate(RIGHT, deltaTime);
+			camera->moveCamera(UP, deltaTime);
+			//camera->keyRotate(RIGHT, deltaTime);
 			break;
 		}
 
