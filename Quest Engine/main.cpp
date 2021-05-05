@@ -86,26 +86,6 @@ void onKeyboard(unsigned char key, int x, int y) {
 		case 27:
 			exit(0);
 			break;
-		case 'w':
-		case 'W':
-			//camera->moveCamera(UP, deltaTime);
-			camera->moveWithPlayer(UP, player->MOVE_DIST);
-			break;
-		case 's':
-		case 'S':
-			camera->moveWithPlayer(DOWN, player->MOVE_DIST);
-			//camera->moveCamera(DOWN, deltaTime);
-			break;
-		case 'a':
-		case 'A':
-			camera->moveWithPlayer(LEFT, player->MOVE_DIST);
-			//camera->moveCamera(LEFT, deltaTime);
-			break;
-		case 'd':
-		case 'D':
-			camera->moveWithPlayer(RIGHT, player->MOVE_DIST);
-			//camera->moveCamera(RIGHT, deltaTime);
-			break;
 		case 'c':
 		case 'C':
 			camera->lookAt(glm::vec3(0.0f, 0.0f, -100.0f));
@@ -175,13 +155,13 @@ int main(int argc, char* argv[]) {
 	// Create shaders
 	Shader* playerShader = new Shader("Shaders/simpleModelVert.shader", "Shaders/simpleModelFrag.shader");
 
-	// Create main player
-	player = new Player(playerShader);
-	player->setModel("PLAYER1.obj");
-
 	// Run game
 	camera = new Camera();
 	level = new DemoLevel();
+
+	// Create main player
+	player = new Player(playerShader, camera);
+	player->setModel("PLAYER1.obj");
 
 	// Enter the main loop
 	glutMainLoop();
