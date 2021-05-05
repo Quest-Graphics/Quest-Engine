@@ -89,17 +89,21 @@ void onKeyboard(unsigned char key, int x, int y) {
 		case 'w':
 		case 'W':
 			//camera->moveCamera(UP, deltaTime);
+			camera->moveWithPlayer(UP, player->MOVE_DIST);
 			break;
 		case 's':
 		case 'S':
+			camera->moveWithPlayer(DOWN, player->MOVE_DIST);
 			//camera->moveCamera(DOWN, deltaTime);
 			break;
 		case 'a':
 		case 'A':
+			camera->moveWithPlayer(LEFT, player->MOVE_DIST);
 			//camera->moveCamera(LEFT, deltaTime);
 			break;
 		case 'd':
 		case 'D':
+			camera->moveWithPlayer(RIGHT, player->MOVE_DIST);
 			//camera->moveCamera(RIGHT, deltaTime);
 			break;
 		case 'c':

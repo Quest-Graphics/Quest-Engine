@@ -4,12 +4,12 @@
 
 #include "Entity.h"
 
-static const float MOVE_DIST = 2.0f;
-
 class Player : public Entity
 {
 public:
+	float MOVE_DIST;
 	Player(Shader* shader) : Entity(shader) {
+		MOVE_DIST = 2.0f;
 	}
 
 	void onKeyboard(unsigned char key, int x, int y)

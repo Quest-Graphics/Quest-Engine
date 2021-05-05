@@ -53,6 +53,25 @@ void Camera::moveCamera(direction dir, float deltaTime)
 	}
 }
 
+void Camera::moveWithPlayer(direction dir, float MOVE_DIST)
+{
+	switch (dir)
+	{
+		case UP:
+			m_position.z -= MOVE_DIST;
+			break;
+		case DOWN:
+			m_position.z += MOVE_DIST;
+			break;
+		case RIGHT:
+			m_position.x += MOVE_DIST;
+			break;
+		case LEFT:
+			m_position.x -= MOVE_DIST;
+			break;
+	}
+}
+
 //rotates the camera based on a key press/direction given
 void Camera::keyRotate(direction dir, float deltaTime)
 {

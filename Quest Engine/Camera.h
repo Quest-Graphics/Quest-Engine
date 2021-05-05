@@ -31,4 +31,5 @@ public:
 	void keyRotate(direction dir, float deltaTime);
 	void mouseRotate(float deltaX, float deltaY, float deltaTime);
 	void lookAt(glm::vec3 target);
+	void moveWithPlayer(direction dir, float MOVE_DIST);
 };
