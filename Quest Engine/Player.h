@@ -4,7 +4,7 @@
 
 #include "Entity.h"
 
-static const float MOVE_DIST = 10.0f;
+static const float MOVE_DIST = 2.0f;
 
 class Player : public Entity
 {
