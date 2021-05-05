@@ -13,7 +13,7 @@
 
 #include "DemoLevel.h"
 
-const glm::ivec2 viewport = glm::ivec2(1024, 768);
+glm::ivec2 viewport = glm::ivec2(1024, 768);
 
 Camera* camera = nullptr;
 Level* level = nullptr;
@@ -43,7 +43,7 @@ void onDisplay() {
 	else
 	{
 		auto view = camera->viewMatrix();
-		auto projection = glm::perspective(camera->m_fov, (float) viewport.x / viewport.y, 1.0f, 1000.0f);
+		auto projection = glm::perspective(camera->m_fov, (float) viewport.x / viewport.y, 1.0f, 100.0f);
 
 		if (level)
 		{
@@ -71,6 +71,8 @@ void onIdle() {
 
 void onReshape(int w, int h) {
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+	viewport.x = w;
+	viewport.y = h;
 	checkError();
 }
 
@@ -150,9 +152,10 @@ void onSpecialInput(int key, int x, int y) {
 
 int main(int argc, char* argv[]) {
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE);
 	glutInitWindowSize(viewport.x, viewport.y);
 	glutInitWindowPosition(100, 100);
+	glutSetOption(GLUT_MULTISAMPLE, 8);
 	glutCreateWindow("Dungeon Quest");
 	glewInit();
 	initRendering();
