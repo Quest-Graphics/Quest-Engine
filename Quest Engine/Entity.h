@@ -29,8 +29,6 @@ struct Entity {
 	 */
 	bool setModel(std::string objectFile);
 
-	AABB extent();
-
 protected:
 	static entity_id_t currentId;
 

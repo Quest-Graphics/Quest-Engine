@@ -99,7 +99,6 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="Overlay.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="tiny_obj_loader.h" />
     <ClInclude Include="util.h" />

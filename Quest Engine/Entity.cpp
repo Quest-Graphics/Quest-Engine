@@ -41,7 +41,3 @@ bool Entity::setModel(std::string objectFile) {
 
 	return false;
 }
-
-AABB Entity::extent() {
-	return this->_model->extent();
-}

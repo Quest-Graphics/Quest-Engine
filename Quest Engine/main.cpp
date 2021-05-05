@@ -160,7 +160,7 @@ int main(int argc, char* argv[]) {
 	level = new DemoLevel();
 
 	// Create main player
-	player = new Player(playerShader, camera);
+	player = new Player(playerShader, camera, level);
 	player->setModel("PLAYER1.obj");
 
 	// Enter the main loop

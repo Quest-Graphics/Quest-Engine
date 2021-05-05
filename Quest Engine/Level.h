@@ -6,6 +6,8 @@
 
 class Level {
 public:
+	Entity* mainStage;
+
 	~Level()
 	{
 		for (std::map<entity_id_t, Entity*>::iterator i = entities.begin(); i != entities.end(); i++)

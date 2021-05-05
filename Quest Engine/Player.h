@@ -8,12 +8,15 @@ class Player : public Entity
 {
 private:
 	Camera* _camera;
+	Level* _level;
 
 public:
 	float MOVE_DIST;
-	Player(Shader* shader, Camera* camera) : Entity(shader) {
+	Player(Shader* shader, Camera* camera, Level* level) : Entity(shader) {
 		MOVE_DIST = 2.0f;
 		_camera = camera;
+		_level = level;
+		_level->mainStage->boundingBox;
 	}
 
 	void onKeyboard(unsigned char key, int x, int y)
