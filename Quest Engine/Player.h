@@ -13,10 +13,9 @@ private:
 public:
 	float MOVE_DIST;
 	Player(Shader* shader, Camera* camera, Level* level) : Entity(shader) {
-		MOVE_DIST = 2.0f;
+		MOVE_DIST = 1.0f;
 		_camera = camera;
 		_level = level;
-		_level->mainStage->boundingBox;
 	}
 
 	void onKeyboard(unsigned char key, int x, int y)

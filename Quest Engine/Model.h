@@ -8,11 +8,19 @@
 #include "tiny_obj_loader.h"
 
 /* Represents the coordinates of an axis-aligned bounding box */
-typedef struct {
+struct AABB {
 	float minX, maxX;
 	float minY, maxY;
 	float minZ, maxZ;
-} AABB;
+
+	AABB operator+(const glm::vec3 translate) {
+		return {
+			minX + translate.x, maxX + translate.x,
+			minY + translate.y, maxY + translate.y,
+			minZ + translate.z, maxZ + translate.z
+		};
+	}
+};
 
 struct Model
 {

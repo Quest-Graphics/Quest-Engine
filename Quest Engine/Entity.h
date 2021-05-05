@@ -14,8 +14,6 @@ const glm::vec3 AXIS_Y(0.0f, 1.0f, 0.0f);
 struct Entity {
 	Entity(Shader* shader, std::string initialModelFile = "");
 
-	AABB boundingBox;
-
 	entity_id_t id();
 
 	void render(glm::mat4 view, glm::mat4* projection);
@@ -28,6 +26,8 @@ struct Entity {
 	 * of the same model.
 	 */
 	bool setModel(std::string objectFile);
+
+	AABB extent();
 
 protected:
 	static entity_id_t currentId;

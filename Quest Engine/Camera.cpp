@@ -22,7 +22,6 @@ Camera::Camera(glm::vec3 position, glm::vec3 forward, glm::vec3 up, glm::vec3 ri
 	m_mvmtSpeed = mvmtSpeed;
 }
 
-
 glm::mat4 Camera::viewMatrix()
 {
 	return glm::lookAt(m_position, m_position + m_forward, m_up);

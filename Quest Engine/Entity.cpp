@@ -35,9 +35,12 @@ bool Entity::setModel(std::string objectFile) {
 
 	if (model) {
 		this->_model = model;
-		this->boundingBox = model->extent();
 		return true;
 	}
 
 	return false;
+}
+
+AABB Entity::extent() {
+	return _model->extent() + position;
 }
