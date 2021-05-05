@@ -9,7 +9,7 @@ public:
 	DemoLevel()
 	{
 		Shader* sceneShader = new Shader("Shaders/simpleModelVert.shader", "Shaders/simpleModelFrag.shader");
-		addEntity(new Scene(sceneShader, "STAGE1.obj"));
+		addEntity(new Scene(sceneShader, "STAGE2.obj"));
 	}
 
 	std::string name()
