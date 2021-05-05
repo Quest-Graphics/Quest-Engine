@@ -7,6 +7,13 @@
 #include <map>
 #include "tiny_obj_loader.h"
 
+/* Represents the coordinates of an axis-aligned bounding box */
+typedef struct {
+	float minX, maxX;
+	float minY, maxY;
+	float minZ, maxZ;
+} AABB;
+
 struct Model
 {
 	static Model* getOrLoad(std::string name);
@@ -30,6 +37,12 @@ struct Model
 	* buffer() must have been called previously if another model was rendered last.
 	*/
 	void render(glm::mat4 view, glm::mat4* projection, Shader* shader);
+
+	/*
+	Get the extent of them model along each axis.
+	@return an axis-aligned bounding box
+	*/
+	AABB extent();
 
 private:
 	static std::map<std::string, Model> modelCache;

@@ -96,3 +96,54 @@ void Model::render(glm::mat4 view, glm::mat4* projection, Shader* shader) {
 
 	shader->unuse();
 }
+
+AABB Model::extent()
+{
+	// X, Y, Z
+	float min[3] = { 0, 0, 0 };
+	float max[3] = { 0, 0, 0 };
+
+	if (shapes.empty()) {
+		fputs("Cannot calculate extent of model with no shapes.", stderr);
+	}
+	else {
+		// Starting values
+		for (int axis = 0; axis < 3; axis++) {
+			min[axis] = max[axis] = shapes[0].mesh.positions[axis];
+		}
+
+		// Check all shapes in this model
+		for (auto& shape : shapes) {
+			// Check all vertices in this shape
+			for (int p = 0; p < shape.mesh.positions.size();) {
+				// Update all axes from this vertex
+				for (int axis = 0; axis < 3; axis++) {
+					float* position = &shape.mesh.positions[p];
+
+					if (*position < min[axis]) {
+						min[axis] = *position;
+					}
+
+					if (*position > max[axis]) {
+						max[axis] = *position;
+					}
+
+					p++; // Next axis position is at the next element of positions 
+				}
+			}
+		}
+	}
+
+	AABB boundingBox = {
+		min[0], max[0], // X
+		min[1], max[1], // Y
+		min[2], max[2], // Z
+	};
+
+	printf("Computed model extents:\n\tminX = %+f\tmaxX = %+f\n\tminY = %+f\tmaxY = %+f\n\tminZ = %+f\tmaxZ = %+f\n",
+		boundingBox.minX, boundingBox.maxX,
+		boundingBox.minY, boundingBox.maxY,
+		boundingBox.minZ, boundingBox.maxZ);
+
+	return boundingBox;
+}
