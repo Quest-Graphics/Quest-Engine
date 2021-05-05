@@ -3,8 +3,8 @@
 
 Camera::Camera()
 {
-	m_position = glm::vec3(0.0f, 3.0f, 0.0f);
-	m_forward = glm::vec3(0.0f, 0.0f, -1.0f);
+	m_position = glm::vec3(15.0f, 10.0f, 10.0f);
+	m_forward = glm::vec3(-0.7f, -0.5f, -1.0f);
 	m_up = glm::vec3(0.0f, 1.0f, 0.0f);
 	m_right = glm::vec3(1.0f, 0.0f, 0.0f);
 }
