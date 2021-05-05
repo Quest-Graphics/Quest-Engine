@@ -127,15 +127,15 @@ void onSpecialInput(int key, int x, int y) {
 			//camera->keyRotate(UP, deltaTime);
 			break;
 		case GLUT_KEY_DOWN:
-			camera->moveCamera(UP, deltaTime);
+			camera->moveCamera(DOWN, deltaTime);
 			//camera->keyRotate(DOWN, deltaTime);
 			break;
 		case GLUT_KEY_LEFT:
-			camera->moveCamera(UP, deltaTime);
+			camera->moveCamera(LEFT, deltaTime);
 			//camera->keyRotate(LEFT, deltaTime);
 			break;
 		case GLUT_KEY_RIGHT:
-			camera->moveCamera(UP, deltaTime);
+			camera->moveCamera(RIGHT, deltaTime);
 			//camera->keyRotate(RIGHT, deltaTime);
 			break;
 		}
