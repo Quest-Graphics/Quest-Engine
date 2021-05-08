@@ -5,20 +5,23 @@
 #include <GL/freeglut.h>
 
 #include "Entity.h"
+#include "Coin.h"
 
 class Player : public Entity
 {
 private:
 	Camera* _camera;
 	Level* _level;
+	Coin* _coin;
 
 public:
 	float MOVE_DIST;
-	Player(Shader* shader, Camera* camera, Level* level) : Entity(shader) {
+	Player(Shader* shader, Camera* camera, Level* level, Coin* coin) : Entity(shader) {
 		MOVE_DIST = 1.0f;
 		_camera = camera;
 		_level = level;
 		position.y = 2.5f;
+		_coin = coin;
 	}
 
 	void onKeyboard(unsigned char key, int x, int y)
@@ -81,6 +84,10 @@ public:
 		case 13: // Enter
 			// TODO: interact with item
 			break;
+		}
+
+		if (intersects(_coin)) {
+			_coin->hit();
 		}
 	}
 

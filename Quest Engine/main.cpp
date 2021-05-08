@@ -12,6 +12,7 @@
 #include "Overlay.h"
 
 #include "DemoLevel.h"
+#include "Coin.h"
 
 glm::ivec2 viewport = glm::ivec2(1024, 768);
 
@@ -19,6 +20,7 @@ Camera* camera = nullptr;
 Level* level = nullptr;
 Player* player = nullptr;
 Overlay* overlay = nullptr; // For 2D UI
+Coin* coin = nullptr;
 
 static float deltaTime = 0;
 
@@ -158,9 +160,10 @@ int main(int argc, char* argv[]) {
 	// Run game
 	camera = new Camera();
 	level = new DemoLevel();
+	coin = new Coin(playerShader, static_cast<DemoLevel*>(level));
 
 	// Create main player
-	player = new Player(playerShader, camera, level);
+	player = new Player(playerShader, camera, level, coin);
 	player->setModel("PLAYER1.obj");
 
 	// Enter the main loop

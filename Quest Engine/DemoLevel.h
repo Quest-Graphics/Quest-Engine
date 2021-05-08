@@ -15,4 +15,9 @@ public:
 	{
 		return "Demo Level";
 	}
+
+	void score() {
+		static int score = 0;
+		glutSetWindowTitle(("Score: " + std::to_string(++score)).c_str());
+	}
 };

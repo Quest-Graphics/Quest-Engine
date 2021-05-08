@@ -29,6 +29,15 @@ struct Entity {
 
 	AABB extent();
 
+	bool intersects(Entity* other) {
+		const AABB myBB = extent();
+		const AABB otherBB = other->extent();
+
+		return myBB.minX < otherBB.maxX && myBB.maxX > otherBB.minX
+			&& myBB.minY < otherBB.maxY && myBB.maxY > otherBB.minY
+			&& myBB.minZ < otherBB.maxZ && myBB.maxZ > otherBB.minZ;
+	}
+
 protected:
 	static entity_id_t currentId;
 
