@@ -52,6 +52,15 @@ struct Model
 	*/
 	AABB extent();
 
+	/**
+	* Get the maximum size of the model along each axis.
+	*/
+	glm::vec3 size() {
+		const AABB bb = extent();
+		return glm::vec3(bb.maxX - bb.minX, bb.maxY - bb.minY, bb.maxZ - bb.minZ);
+	}
+
+
 private:
 	static std::map<std::string, Model> modelCache;
 };

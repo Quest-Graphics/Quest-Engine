@@ -16,6 +16,7 @@ public:
 		MOVE_DIST = 1.0f;
 		_camera = camera;
 		_level = level;
+		position.y = 2.5f;
 	}
 
 	void onKeyboard(unsigned char key, int x, int y)
@@ -23,27 +24,43 @@ public:
 		switch (key) {
 		case 'w':
 		case 'W':
-			position.z -= MOVE_DIST;
 			facing = 0;
-			_camera->moveWithPlayer(UP, MOVE_DIST);
+
+			if (position.z - MOVE_DIST > _level->mainStage->extent().minZ) {
+				position.z -= MOVE_DIST;
+				_camera->moveWithPlayer(UP, MOVE_DIST);
+			}
+
 			break;
 		case 'a':
 		case 'A':
-			position.x -= MOVE_DIST;
 			facing = 270;
-			_camera->moveWithPlayer(LEFT, MOVE_DIST);
+
+			if (position.x - MOVE_DIST > _level->mainStage->extent().minX) {
+				position.x -= MOVE_DIST;
+				_camera->moveWithPlayer(LEFT, MOVE_DIST);
+			}
+
 			break;
 		case 's':
 		case 'S':
-			position.z += MOVE_DIST;
 			facing = 180;
-			_camera->moveWithPlayer(DOWN, MOVE_DIST);
+
+			if (position.z + MOVE_DIST + _model->size().z < _level->mainStage->extent().maxZ) {
+				position.z += MOVE_DIST;
+				_camera->moveWithPlayer(DOWN, MOVE_DIST);
+			}
+
 			break;
 		case 'd':
 		case 'D':
-			position.x += MOVE_DIST;
 			facing = 90;
-			_camera->moveWithPlayer(RIGHT, MOVE_DIST);
+
+			if (position.x + MOVE_DIST + _model->size().x < _level->mainStage->extent().maxX) {
+				position.x += MOVE_DIST;
+				_camera->moveWithPlayer(RIGHT, MOVE_DIST);
+			}
+
 			break;
 		case 'e':
 		case 'E':
