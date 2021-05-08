@@ -1,5 +1,7 @@
 #pragma once
 
+#include <playsoundapi.h>
+
 #include <GL/freeglut.h>
 
 #include "Entity.h"
@@ -30,6 +32,9 @@ public:
 				position.z -= MOVE_DIST;
 				_camera->moveWithPlayer(UP, MOVE_DIST);
 			}
+			else {
+				bump();
+			}
 
 			break;
 		case 'a':
@@ -39,6 +44,9 @@ public:
 			if (position.x - MOVE_DIST > _level->mainStage->extent().minX) {
 				position.x -= MOVE_DIST;
 				_camera->moveWithPlayer(LEFT, MOVE_DIST);
+			}
+			else {
+				bump();
 			}
 
 			break;
@@ -50,6 +58,9 @@ public:
 				position.z += MOVE_DIST;
 				_camera->moveWithPlayer(DOWN, MOVE_DIST);
 			}
+			else {
+				bump();
+			}
 
 			break;
 		case 'd':
@@ -59,6 +70,9 @@ public:
 			if (position.x + MOVE_DIST + _model->size().x < _level->mainStage->extent().maxX) {
 				position.x += MOVE_DIST;
 				_camera->moveWithPlayer(RIGHT, MOVE_DIST);
+			}
+			else {
+				bump();
 			}
 
 			break;
@@ -82,5 +96,10 @@ public:
 		case GLUT_KEY_RIGHT:
 			break;
 		}
+	}
+
+private:
+	void bump() {
+		PlaySound(L"Sounds/bump.wav", NULL, SND_ASYNC | SND_FILENAME);
 	}
 };
