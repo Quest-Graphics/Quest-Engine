@@ -49,6 +49,9 @@ static float deltaTime = 0;
 
 unsigned int planeVAO;
 
+glm::vec2 upperBound(50.0f, 50.0f);
+glm::vec2 lowerBound(-50.0f, -50.0f);
+
 float enemyPositions[] = {
 	 50.0f, 2.5f,  50.0f, 
 	 50.0f, 2.5f, -50.0f,
@@ -75,7 +78,8 @@ void onDisplay() {
 
 	view = camera->viewMatrix();
 	projection = glm::perspective(camera->m_fov, (float) viewport.x / viewport.y, 1.0f, 1000.0f);
-	planeModel = glm::scale(glm::vec3(100.0f, 1.0f, 100.0f)) * glm::rotate(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+	glm::vec2 scaleFactor = upperBound - lowerBound;
+	planeModel = glm::translate(upperBound.x + lowerBound.x, 0.0f, upperBound.y + lowerBound.y) * glm::scale(scaleFactor.x, 1.0f, scaleFactor.y) * glm::rotate(90.0f, 1.0f, 0.0f, 0.0f);
 
 	glm::vec3 color;
 
@@ -85,7 +89,7 @@ void onDisplay() {
 	playerShader->setMat4("Projection", projection);
 	playerShader->setVec3("viewPos", camera->m_position);
 	playerShader->setInt("numLights", lights.size());
-	playerShader->setFloat("shininess", 20.0f);
+	playerShader->setFloat("shininess", 60.0f);
 
 	for (int i = 0; i < lights.size(); i++)
 	{
@@ -189,35 +193,33 @@ void onKeyboard(unsigned char key, int x, int y) {
 	case 'w':case 'W':
 		player->facing = 225.0f;
 		mvmtDir = glm::normalize(glm::vec3(-1.0f, 0.0f, -1.0f)) * mvmtDist;
-		player->position += mvmtDir;
-		camera->m_position += mvmtDir;
-
 		break;
+
 	case 'a':case 'A':
 		player->facing = 315.0f;
 		mvmtDir = glm::normalize(glm::vec3(-1.0f, 0.0f, 1.0f)) * mvmtDist;
-		player->position += mvmtDir;
-		camera->m_position += mvmtDir;
-
 		break;
+
 	case 's':case 'S':
 		player->facing = 45.0f;
 		mvmtDir = glm::normalize(glm::vec3(1.0f, 0.0f, 1.0f)) * mvmtDist;
-		player->position += mvmtDir;
-		camera->m_position += mvmtDir;
-
 		break;
+
 	case 'd':case 'D':
 		player->facing = 135.0;
 		mvmtDir = glm::normalize(glm::vec3(1.0f, 0.0f, -1.0f)) * mvmtDist;
-		player->position += mvmtDir;
-		camera->m_position += mvmtDir;
-
-		break;
-	case 'c':case'C':
-		//std::cout << glm::to_string(camera->m_forward) << std::endl;
 		break;
 	}
+
+	glm::vec2 afterPos(player->position.x + mvmtDir.x, player->position.z + mvmtDir.z);
+
+	if (afterPos.x > upperBound.x || afterPos.x < lowerBound.x)
+		return;
+	if (afterPos.y > upperBound.y || afterPos.y < lowerBound.y)
+		return;
+
+	player->position += mvmtDir;
+	camera->m_position += mvmtDir;
 
 	checkError("Key");
 }
