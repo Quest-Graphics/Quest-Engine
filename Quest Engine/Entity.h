@@ -15,6 +15,7 @@ struct Entity {
 public:
 	glm::vec3 position;
 	glm::vec3 velocity;
+	float facing; // degrees
 
 	Entity(Shader* shader, std::string initialModelFile = "", std::string initialTextureFile = "");
 
@@ -50,5 +51,4 @@ protected:
 	entity_id_t _id;
 	Model* _model = nullptr;
 	Shader* _shader = nullptr;
-	float facing; // degrees
 };
