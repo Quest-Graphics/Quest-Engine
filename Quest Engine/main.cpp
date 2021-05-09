@@ -4,6 +4,7 @@
 
 #include <string>
 #include <iostream>
+#include <vector>
 
 #include <iostream>
 #include <glm/gtx/string_cast.hpp>
@@ -16,6 +17,7 @@
 #include "Overlay.h"
 
 #include "Geometry.h"
+#include "Light.h"
 
 #include "DemoLevel.h"
 #include "Coin.h"
@@ -31,8 +33,16 @@ Cube* enemy = nullptr;
 
 Shader* playerShader;
 Shader* planeShader;
-Shader* coinShader;
+Shader* simpleShader;
 Quad* plane;
+std::vector<Light*> lights;
+
+glm::mat4 playerModel;
+glm::mat4 cubeModel;
+glm::mat4 planeModel;
+
+glm::mat4 view;
+glm::mat4 projection;
 
 static float deltaTime = 0;
 
@@ -62,21 +72,45 @@ void onDisplay() {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glm::mat4 view = camera->viewMatrix();
-	glm::mat4 projection = glm::perspective(camera->m_fov, (float) viewport.x / viewport.y, 1.0f, 1000.0f);
-	glm::mat4 model = glm::scale(glm::vec3(100.0f, 1.0f, 100.0f)) * glm::rotate(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+	view = camera->viewMatrix();
+	projection = glm::perspective(camera->m_fov, (float) viewport.x / viewport.y, 1.0f, 1000.0f);
+	planeModel = glm::scale(glm::vec3(100.0f, 1.0f, 100.0f)) * glm::rotate(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
 	glm::vec3 color;
 
-	planeShader->use();
+	//all the lights
+	playerShader->use();
+	playerShader->setMat4("View", view);
+	playerShader->setMat4("Projection", projection);
+	playerShader->setVec3("viewPos", camera->m_position);
+	playerShader->setInt("numLights", lights.size());
+	playerShader->setFloat("shininess", 20.0f);
+
+	for (int i = 0; i < lights.size(); i++)
+	{
+		playerShader->setVec3("pointLights[" + std::to_string(i) + "].position", lights[i]->position);
+		playerShader->setVec3("pointLights[" + std::to_string(i) + "].color", lights[i]->color);
+
+		playerShader->setVec3("pointLights[" + std::to_string(i) + "].ambient", lights[i]->ambient);
+		playerShader->setVec3("pointLights[" + std::to_string(i) + "].diffuse", lights[i]->diffuse);
+		playerShader->setVec3("pointLights[" + std::to_string(i) + "].specular", lights[i]->specular);
+
+		playerShader->setFloat("pointLights[" + std::to_string(i) + "].constant", lights[i]->constant);
+		playerShader->setFloat("pointLights[" + std::to_string(i) + "].linear", lights[i]->linear);
+		playerShader->setFloat("pointLights[" + std::to_string(i) + "].quadratic", lights[i]->quadratic);
+	}
+
+
+	//plane
+	playerShader->use();
 	color = glm::vec3(0.0f, 1.0f, 0.0f);
-	planeShader->setMat4("Model", model);
-	planeShader->setMat4("View", view);
-	planeShader->setMat4("Projection", projection);
-	planeShader->setVec3("objColor", color);
+	playerShader->setMat4("Model", planeModel);
+	playerShader->setMat4("View", view);
+	playerShader->setMat4("Projection", projection);
+	playerShader->setVec3("objColor", color);
 	plane->render();
 
-	playerShader->use();
+	//enemy cubes
 	color = glm::vec3(1.0f, 0.0f, 0.0f);
 	playerShader->setVec3("objColor", color);
 	playerShader->setMat4("View", view);
@@ -84,28 +118,43 @@ void onDisplay() {
 	playerShader->setVec3("objColor", color);
 	for (int i = 0; i < 12; i += 3)
 	{ 
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(enemyPositions[i], enemyPositions[i+1], enemyPositions[i+2]));
-		model = glm::scale(model, glm::vec3(5.0f)); 
+		cubeModel = glm::mat4(1.0f);
+		cubeModel = glm::translate(cubeModel, glm::vec3(enemyPositions[i], enemyPositions[i+1], enemyPositions[i+2]));
+		cubeModel = glm::scale(cubeModel, glm::vec3(5.0f)); 
 		
-		playerShader->setMat4("Model", model);
+		playerShader->setMat4("Model", cubeModel);
 		enemy->render();
 	}
-	
-	color = glm::vec3(0.0f, 0.0f, 1.0f);
-	playerShader->setVec3("objColor", color);
 
-	model = glm::mat4(1.0f);
-	player->render(model, view, projection);
 
-	coinShader->use();
+	//coin
 	color = glm::vec3(1.0f, 1.0f, 0.0f);
-	coinShader->setVec3("objColor", color);
-	coinShader->setMat4("View", view);
-	coinShader->setMat4("Projection", projection);
-	coinShader->setMat4("Model", model);
-	coin->render(model, view, projection);
+	playerShader->setVec3("objColor", color);
+	playerShader->setMat4("View", view);
+	playerShader->setMat4("Projection", projection);
+	playerShader->setMat4("Model", playerModel);
+	coin->render(playerModel, view, projection);
 	
+	//player
+	playerShader->use();
+	color = glm::vec3(0.0f, 0.0f, 1.0f);
+	playerModel = glm::rotate(player->facing, glm::vec3(0.0f, 1.0f, 0.0f));
+	playerShader->setMat4("Model", playerModel);
+	playerShader->setVec3("objColor", color);
+	player->render(playerModel, view, projection);
+
+
+	//cube light
+	simpleShader->use();
+	for (int i = 0; i < lights.size(); i++)
+	{
+		cubeModel = glm::translate(lights[i]->position);
+		simpleShader->setMat4("Model", cubeModel);
+		simpleShader->setMat4("View", view);
+		simpleShader->setMat4("Projection", projection);
+		simpleShader->setVec3("objColor", lights[0]->color);
+		enemy->render();
+	}
 
 	glutSwapBuffers();
 	checkError("Display");
@@ -210,15 +259,15 @@ int main(int argc, char* argv[]) {
 	checkError("main/event");
 
 	// Create shaders
-	playerShader = new Shader("Shaders/simpleModelVert.shader", "Shaders/simpleModelFrag.shader");
-	planeShader = new Shader("Shaders/simpleModelVert.shader", "Shaders/simpleModelFrag.shader");
-	coinShader = new Shader("Shaders/simpleModelVert.shader", "Shaders/simpleModelFrag.shader");
+	playerShader = new Shader("Shaders/multiLightsVert.shader", "Shaders/multiLightsFrag.shader");
+	//planeShader = new Shader("Shaders/simpleModelVert.shader", "Shaders/simpleModelFrag.shader");
+	simpleShader = new Shader("Shaders/simpleModelVert.shader", "Shaders/simpleModelFrag.shader");
 
 	// Run game
 	camera = new Camera();
 
 	level = new DemoLevel();
-	coin = new Coin(coinShader, static_cast<DemoLevel*>(level));
+	coin = new Coin(playerShader, static_cast<DemoLevel*>(level));
 
 	// Create main player
 	player = new Player(playerShader, camera, level, coin);
@@ -229,6 +278,34 @@ int main(int argc, char* argv[]) {
 
 	plane = new Quad();
 	enemy = new Cube();
+
+	//Here's what you should do with every light
+	Light* light = new Light();
+	light->position = glm::vec3(0.0f, 10.0f, 0.0f);
+	light->color = glm::vec3(1.0f);
+
+	light->ambient = glm::vec3(0.5f);
+	light->diffuse = glm::vec3(0.75f);
+	light->specular = glm::vec3(1.0f);
+
+	light->constant = 0.5f;
+	light->linear = 0.032f;
+	light->quadratic = 0.01f;
+	lights.push_back(light);
+
+	//second light
+	light = new Light();
+	light->position = glm::vec3(10.0f, 10.0f, 10.0f);
+	light->color = glm::vec3(1.0f);
+
+	light->ambient = glm::vec3(0.5f);
+	light->diffuse = glm::vec3(0.75f);
+	light->specular = glm::vec3(1.0f);
+
+	light->constant = 0.5f;
+	light->linear = 0.032f;
+	light->quadratic = 0.01f;
+	lights.push_back(light);
 
 	// Enter the main loop
 	glutMainLoop();
