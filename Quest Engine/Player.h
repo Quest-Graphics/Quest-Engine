@@ -12,22 +12,24 @@ class Player : public Entity
 private:
 	Camera* _camera;
 	Level* _level;
-	Coin* _coin;
+	std::vector<Coin*> _coins;
 
 public:
 	float MOVE_DIST;
-	Player(Shader* shader, Camera* camera, Level* level, Coin* coin) : Entity(shader) {
+	Player(Shader* shader, Camera* camera, Level* level, std::vector<Coin*> coins) : Entity(shader) {
 		MOVE_DIST = 1.0f;
 		_camera = camera;
 		_level = level;
 		position.y = 0.0f;
-		_coin = coin;
+		_coins = coins;
 	}
 
 	void onKeyboard(unsigned char key, int x, int y)
 	{
-		if (intersects(_coin)) {
-			_coin->hit();
+		for (Coin* coin : _coins) {
+			if (intersects(coin)) {
+				coin->hit();
+			}
 		}
 	}
 

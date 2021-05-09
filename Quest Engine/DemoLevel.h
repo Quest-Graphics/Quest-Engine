@@ -7,6 +7,8 @@
 class DemoLevel : public Level
 {
 public:
+	static const int NUM_COINS = 10;
+
 	DemoLevel()
 	{
 		Shader* sceneShader = new Shader("Shaders/simpleModelVert.shader", "Shaders/simpleModelFrag.shader");
@@ -25,6 +27,12 @@ public:
 
 	void score() {
 		static int score = 0;
-		glutSetWindowTitle(("Score: " + std::to_string(++score)).c_str());
+
+		if (++score == 10) {
+			glutSetWindowTitle("You win!");
+		}
+		else {
+			glutSetWindowTitle(("Score: " + std::to_string(score) + "/" + std::to_string(NUM_COINS)).c_str());
+		}
 	}
 };

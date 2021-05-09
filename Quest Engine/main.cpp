@@ -28,7 +28,7 @@ Camera* camera = nullptr;
 Level* level = nullptr;
 Player* player = nullptr;
 Overlay* overlay = nullptr; // For 2D UI
-Coin* coin = nullptr;
+std::vector<Coin*> coins;
 Cube* enemy = nullptr;
 
 Shader* playerShader;
@@ -139,7 +139,10 @@ void onDisplay() {
 	playerShader->setMat4("View", view);
 	playerShader->setMat4("Projection", projection);
 	playerShader->setMat4("Model", coinModel);
-	coin->render(coinModel, view, projection);
+	
+	for (auto coin : coins) {
+		coin->render(coinModel, view, projection);
+	}
 	
 	//player
 	playerShader->use();
@@ -276,10 +279,13 @@ int main(int argc, char* argv[]) {
 	camera = new Camera();
 
 	level = new DemoLevel();
-	coin = new Coin(playerShader, static_cast<DemoLevel*>(level));
+
+	for (int i = 0; i < DemoLevel::NUM_COINS; i++) {
+		coins.push_back(new Coin(playerShader, static_cast<DemoLevel*>(level)));
+	}
 
 	// Create main player
-	player = new Player(playerShader, camera, level, coin);
+	player = new Player(playerShader, camera, level, coins);
 	player->setModel("PLAYER1.obj");
 
 	camera->m_position = glm::vec3(15.0f, 15.0f, 15.0f) + player->position;
