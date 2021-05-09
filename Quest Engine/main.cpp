@@ -27,6 +27,7 @@ Level* level = nullptr;
 Player* player = nullptr;
 Overlay* overlay = nullptr; // For 2D UI
 Coin* coin = nullptr;
+Cube* enemy = nullptr;
 
 Shader* playerShader;
 Shader* planeShader;
@@ -83,13 +84,12 @@ void onDisplay() {
 	playerShader->setVec3("objColor", color);
 	for (int i = 0; i < 12; i += 3)
 	{ 
-		Cube enemy = Cube();
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(enemyPositions[i], enemyPositions[i+1], enemyPositions[i+2]));
 		model = glm::scale(model, glm::vec3(5.0f)); 
 		
 		playerShader->setMat4("Model", model);
-		enemy.render();
+		enemy->render();
 	}
 	
 	color = glm::vec3(0.0f, 0.0f, 1.0f);
@@ -228,6 +228,7 @@ int main(int argc, char* argv[]) {
 	camera->lookAt(player->position);
 
 	plane = new Quad();
+	enemy = new Cube();
 
 	// Enter the main loop
 	glutMainLoop();
