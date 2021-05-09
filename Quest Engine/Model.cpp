@@ -69,11 +69,12 @@ void Model::buffer() {
 	}
 }
 
-void Model::render(glm::mat4 view, glm::mat4* projection, Shader* shader) {
+void Model::render(glm::mat4 model, glm::mat4 view, glm::mat4 projection, Shader* shader) {
 	shader->use(); // Bind shader
 
-	shader->setMat4("projection", *projection); // send projection to vertex shader
-	shader->setMat4("modelView", view);		// send modelview to vertex shader
+	shader->setMat4("Model", model);
+	shader->setMat4("View", view);		// send modelview to vertex shader
+	shader->setMat4("Projection", projection); // send projection to vertex shader
 
 	for (size_t i = 0; i < shapes.size(); i++) {
 		// VBO
@@ -140,12 +141,10 @@ AABB Model::extent()
 		min[2], max[2], // Z
 	};
 
-	/*
 	printf("Computed model extents:\n\tminX = %+f\tmaxX = %+f\n\tminY = %+f\tmaxY = %+f\n\tminZ = %+f\tmaxZ = %+f\n",
 		boundingBox.minX, boundingBox.maxX,
 		boundingBox.minY, boundingBox.maxY,
 		boundingBox.minZ, boundingBox.maxZ);
-	*/
 
 	return boundingBox;
 }

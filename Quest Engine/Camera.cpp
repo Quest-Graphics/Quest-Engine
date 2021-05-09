@@ -1,10 +1,9 @@
 #include "Camera.h"
-#include "Camera.h"
 
 Camera::Camera()
 {
-	m_position = glm::vec3(15.0f, 10.0f, 10.0f);
-	m_forward = glm::vec3(-0.7f, -0.5f, -1.0f);
+	m_position = glm::vec3(0.0f, 0.0f, 0.0f);
+	m_forward = glm::vec3(0.0f, 0.0f, -1.0f);
 	m_up = glm::vec3(0.0f, 1.0f, 0.0f);
 	m_right = glm::vec3(1.0f, 0.0f, 0.0f);
 }
@@ -139,19 +138,19 @@ void Camera::lookAt(glm::vec3 target)
 	glm::vec3 targetDir = glm::normalize(target - m_position);
 
 	//used to calculate pitch and yaw
-	glm::vec3 targetRef = glm::vec3(targetDir.x, 0.0f, targetDir.z);
-	glm::vec3 forwardRef = glm::vec3(m_forward.x, 0.0f, m_forward.z);
+	glm::vec3 targetRef = glm::normalize(glm::vec3(targetDir.x, 0.0f, targetDir.z));
+	glm::vec3 forwardRef = glm::normalize(glm::vec3(m_forward.x, 0.0f, m_forward.z));
 
 	//rotates the camera horizontally
-	m_yaw = acos(glm::dot(glm::normalize(targetRef), glm::normalize(forwardRef)));
+	m_yaw = -glm::degrees(acos(glm::dot(forwardRef, targetRef)));
 
-	glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), m_yaw, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), m_yaw, m_up);
 
 	m_forward = glm::vec3(glm::vec4(m_forward, 1.0f) * rotate);
 	m_right = glm::vec3(glm::vec4(m_right, 1.0f) * rotate);
 
 	//rotates camera vertically
-	m_pitch = acos(glm::dot(glm::normalize(m_forward), glm::normalize(targetDir)));
+	m_pitch = glm::degrees(acos(glm::dot(targetRef, targetDir)));
 
 	if (m_pitch >= 89.0f) m_pitch = 89.0f;
 	if (m_pitch <= -89.0f) m_pitch = -89.0f;

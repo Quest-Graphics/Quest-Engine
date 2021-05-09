@@ -13,7 +13,7 @@ private:
 	DemoLevel* _level;
 
 public:
-	Coin(Shader * shader, DemoLevel * level) : Entity(shader, "COIN1.obj") {
+	Coin(Shader* shader, DemoLevel * level) : Entity(shader, "COIN1.obj") {
 		_level = level;
 		randomize();
 		position.y = 5.0f;

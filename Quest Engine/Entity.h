@@ -12,16 +12,14 @@ typedef long entity_id_t;
 const glm::vec3 AXIS_Y(0.0f, 1.0f, 0.0f);
 
 struct Entity {
+public:
 	glm::vec3 position;
-	glm::vec3 velocity;
-	Model* _model = nullptr;
-	float facing; // degrees
 
 	Entity(Shader* shader, std::string initialModelFile = "");
 
 	entity_id_t id();
 
-	virtual void render(glm::mat4 view, glm::mat4* projection);
+	void render(glm::mat4 model, glm::mat4 view, glm::mat4 projection);
 
 	/**
 	 * Open an object file and read it into memory.
@@ -38,23 +36,16 @@ struct Entity {
 		const AABB myBB = extent();
 		const AABB otherBB = other->extent();
 
-		return (myBB.minX < otherBB.maxX) && (myBB.maxX > otherBB.minX)
-			&& (myBB.minY < otherBB.maxY) && (myBB.maxY > otherBB.minY)
-			&& (myBB.minZ < otherBB.maxZ) && (myBB.maxZ > otherBB.minZ);
-	}
-
-	virtual void tick() {
-		position += velocity;
-	}
-
-	glm::vec3 facing_vec() {
-		const float radians = glm::radians(facing);
-		return glm::normalize(glm::vec3(glm::cos(radians), 0.0f, glm::sin(radians)));
+		return myBB.minX < otherBB.maxX && myBB.maxX > otherBB.minX
+			&& myBB.minY < otherBB.maxY && myBB.maxY > otherBB.minY
+			&& myBB.minZ < otherBB.maxZ && myBB.maxZ > otherBB.minZ;
 	}
 
 protected:
 	static entity_id_t currentId;
 
 	entity_id_t _id;
+	Model* _model = nullptr;
 	Shader* _shader = nullptr;
+	float facing; // degrees
 };
