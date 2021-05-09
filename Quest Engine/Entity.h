@@ -14,6 +14,7 @@ const glm::vec3 AXIS_Y(0.0f, 1.0f, 0.0f);
 struct Entity {
 public:
 	glm::vec3 position;
+	glm::vec3 velocity;
 
 	Entity(Shader* shader, std::string initialModelFile = "", std::string initialTextureFile = "");
 
