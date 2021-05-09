@@ -29,6 +29,5 @@ public:
 	void hit() {
 		randomize();
 		_level->score();
-		PlaySound(L"Sounds/coin.wav", NULL, SND_ASYNC | SND_FILENAME);
 	}
 };

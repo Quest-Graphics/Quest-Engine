@@ -219,6 +219,7 @@ void onKeyboard(unsigned char key, int x, int y) {
 		return;
 
 	player->position += mvmtDir;
+	player->onKeyboard(key, x, y);
 	camera->m_position += mvmtDir;
 
 	checkError("Key");
