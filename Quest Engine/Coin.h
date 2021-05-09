@@ -16,7 +16,7 @@ public:
 	Coin(Shader* shader, DemoLevel * level) : Entity(shader, "COIN1.obj") {
 		_level = level;
 		randomize();
-		position.y = 5.0f;
+		position.y = 1.0f;
 	}
 
 	void randomize() {
