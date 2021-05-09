@@ -21,18 +21,11 @@ public:
 		return "Unnamed Level";
 	}
 
-	void render(glm::mat4 view, glm::mat4* projection)
+	void render(glm::mat4 model, glm::mat4 view, glm::mat4 projection)
 	{
 		for (auto& entity : entities)
 		{
-			entity.second->render(view, projection);
-		}
-	}
-
-	void tick() {
-		for (auto& entity : entities)
-		{
-			entity.second->tick();
+			entity.second->render(model, view, projection);
 		}
 	}
 
