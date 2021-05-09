@@ -1,8 +1,9 @@
 #include "Entity.h"
+#include "stb_image.h"
 
 entity_id_t Entity::currentId = 0;
 
-Entity::Entity(Shader* shader, std::string initialModelFile) {
+Entity::Entity(Shader* shader, std::string initialModelFile, std::string initialTextureFile) {
 	_id = ++currentId;
 
 	if (!initialModelFile.empty())
@@ -10,6 +11,10 @@ Entity::Entity(Shader* shader, std::string initialModelFile) {
 		setModel(initialModelFile);
 	}
 
+	if (!initialTextureFile.empty())
+	{
+		setTexture(initialTextureFile);
+	}
 	_shader = shader;
 
 	position = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -39,6 +44,14 @@ bool Entity::setModel(std::string objectFile) {
 		this->_model = model;
 		return true;
 	}
+
+	return false;
+}
+
+bool Entity::setTexture(std::string textureFile)
+{
+	int width, height, nrChannels;
+	unsigned char* data = stbi_load(textureFile.c_str(), &width, &height, &nrChannels, 0);
 
 	return false;
 }

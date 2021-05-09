@@ -15,7 +15,7 @@ struct Entity {
 public:
 	glm::vec3 position;
 
-	Entity(Shader* shader, std::string initialModelFile = "");
+	Entity(Shader* shader, std::string initialModelFile = "", std::string initialTextureFile = "");
 
 	entity_id_t id();
 
@@ -29,6 +29,7 @@ public:
 	 * of the same model.
 	 */
 	bool setModel(std::string objectFile);
+	bool setTexture(std::string textureFile);
 
 	AABB extent();
 
@@ -44,6 +45,7 @@ public:
 protected:
 	static entity_id_t currentId;
 
+	unsigned int texture = NULL;
 	entity_id_t _id;
 	Model* _model = nullptr;
 	Shader* _shader = nullptr;
