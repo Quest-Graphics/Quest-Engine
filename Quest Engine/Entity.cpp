@@ -13,6 +13,7 @@ Entity::Entity(Shader* shader, std::string initialModelFile) {
 	_shader = shader;
 
 	position = glm::vec3(0.0f, 0.0f, 0.0f);
+	velocity = glm::vec3(0.0f, 0.0f, 0.0f);
 	facing = 0;
 }
 

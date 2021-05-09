@@ -80,6 +80,12 @@
     <ClInclude Include="Coin.h">
       <Filter>DemoLevel</Filter>
     </ClInclude>
+    <ClInclude Include="Projectile.h">
+      <Filter>DemoLevel</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>DemoLevel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\simpleModelFrag.shader">

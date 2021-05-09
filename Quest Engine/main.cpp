@@ -23,6 +23,7 @@ Overlay* overlay = nullptr; // For 2D UI
 Coin* coin = nullptr;
 
 static float deltaTime = 0;
+static float lastTick = 0;
 
 void initRendering() {
 	glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
@@ -50,6 +51,11 @@ void onDisplay() {
 		if (level)
 		{
 			level->render(view, &projection);
+
+			if ((lastTick += deltaTime) >= 0.1f) {
+				level->tick();
+				lastTick = 0;
+			}
 		}
 
 		if (player)

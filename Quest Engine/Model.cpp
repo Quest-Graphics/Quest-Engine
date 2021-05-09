@@ -140,10 +140,12 @@ AABB Model::extent()
 		min[2], max[2], // Z
 	};
 
+	/*
 	printf("Computed model extents:\n\tminX = %+f\tmaxX = %+f\n\tminY = %+f\tmaxY = %+f\n\tminZ = %+f\tmaxZ = %+f\n",
 		boundingBox.minX, boundingBox.maxX,
 		boundingBox.minY, boundingBox.maxY,
 		boundingBox.minZ, boundingBox.maxZ);
+	*/
 
 	return boundingBox;
 }

@@ -94,12 +94,14 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Coin.h" />
     <ClInclude Include="DemoLevel.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Overlay.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Projectile.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="tiny_obj_loader.h" />
     <ClInclude Include="util.h" />
