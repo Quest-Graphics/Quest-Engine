@@ -40,6 +40,7 @@ std::vector<Light*> lights;
 glm::mat4 playerModel;
 glm::mat4 cubeModel;
 glm::mat4 planeModel;
+glm::mat4 coinModel;
 
 glm::mat4 view;
 glm::mat4 projection;
@@ -129,16 +130,17 @@ void onDisplay() {
 
 	//coin
 	color = glm::vec3(1.0f, 1.0f, 0.0f);
+	coinModel = glm::mat4(1.0f);
 	playerShader->setVec3("objColor", color);
 	playerShader->setMat4("View", view);
 	playerShader->setMat4("Projection", projection);
-	playerShader->setMat4("Model", playerModel);
-	coin->render(playerModel, view, projection);
+	playerShader->setMat4("Model", coinModel);
+	coin->render(coinModel, view, projection);
 	
 	//player
 	playerShader->use();
 	color = glm::vec3(0.0f, 0.0f, 1.0f);
-	playerModel = glm::rotate(player->facing, glm::vec3(0.0f, 1.0f, 0.0f));
+	//playerModel = glm::rotate(player->facing, glm::vec3(0.0f, 1.0f, 0.0f));
 	playerShader->setMat4("Model", playerModel);
 	playerShader->setVec3("objColor", color);
 	player->render(playerModel, view, projection);
@@ -185,24 +187,28 @@ void onKeyboard(unsigned char key, int x, int y) {
 		exit(0);
 		break;
 	case 'w':case 'W':
+		player->facing = 225.0f;
 		mvmtDir = glm::normalize(glm::vec3(-1.0f, 0.0f, -1.0f)) * mvmtDist;
 		player->position += mvmtDir;
 		camera->m_position += mvmtDir;
 
 		break;
 	case 'a':case 'A':
+		player->facing = 315.0f;
 		mvmtDir = glm::normalize(glm::vec3(-1.0f, 0.0f, 1.0f)) * mvmtDist;
 		player->position += mvmtDir;
 		camera->m_position += mvmtDir;
 
 		break;
 	case 's':case 'S':
+		player->facing = 45.0f;
 		mvmtDir = glm::normalize(glm::vec3(1.0f, 0.0f, 1.0f)) * mvmtDist;
 		player->position += mvmtDir;
 		camera->m_position += mvmtDir;
 
 		break;
 	case 'd':case 'D':
+		player->facing = 135.0;
 		mvmtDir = glm::normalize(glm::vec3(1.0f, 0.0f, -1.0f)) * mvmtDist;
 		player->position += mvmtDir;
 		camera->m_position += mvmtDir;
