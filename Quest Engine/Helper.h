@@ -30,7 +30,7 @@ int checkCollision(std::vector<Coin*> coins, glm::vec3 playerPos)
 {
 	for (int i = 0; i < coins.size(); i++)
 	{
-		if (glm::distance(playerPos, coins[i]->position) <= 2.5f)
+		if (glm::distance(playerPos, coins[i]->position) <= 3.0f)
 		{
 			return i;
 		}

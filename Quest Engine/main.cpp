@@ -174,7 +174,7 @@ void onDisplay() {
 
 	//projectile light
 	simpleShader->use();
-	color = glm::vec3(1.0f, 1.0f, 0.75f);
+	color = glm::vec3(1.0f, 1.0f, sin(angle/5) * 0.75f);
 	for (int i = 0; i < projectiles.size(); i++)
 	{
 		projectileModel = glm::mat4(1.0f);
@@ -195,7 +195,7 @@ void onDisplay() {
 
 	//coins
 	playerShader->use();
-	color = glm::vec3(1.0f, 1.0f, 0.0f);
+	color = glm::vec3(0.9f, 0.9f, 0.0f);
 	playerShader->setVec3("objColor", color);
 	playerShader->setFloat("shininess", 150.0f);
 	coinModel = glm::mat4(1.0f);
@@ -207,13 +207,13 @@ void onDisplay() {
 	
 	//player
 	playerShader->use();
-	color = glm::vec3(0.0f, 0.0f, 1.0f);
+	color = glm::vec3(0.3f, 0.15f, 0.0f);
 	playerShader->setVec3("objColor", color);
 	playerModel = glm::mat4(1.0f);
 	player->render(playerModel, view, projection);
 	playerShader->unuse();
 
-	/*
+	
 	//enemy cubes
 	playerShader->use();
 	color = glm::vec3(1.0f, 0.0f, 0.0f);
@@ -225,7 +225,7 @@ void onDisplay() {
 		playerShader->setMat4("Model", enemyModel);
 		enemies[i]->render(enemyModel, view, projection);
 	}
-	*/
+	
 	
 
 	glutSwapBuffers();
@@ -364,7 +364,7 @@ int main(int argc, char* argv[]) {
 
 	for (int i = 0; i < 12; i+=3)
 	{
-		Enemy* enemy = new Enemy(glm::vec3(enemyPositions[i], enemyPositions[i+1], enemyPositions[i+2]), 2.0f);
+		Enemy* enemy = new Enemy(glm::vec3(enemyPositions[i], enemyPositions[i+1], enemyPositions[i+2]), 1.0f);
 		enemies.push_back(enemy);
 	}
 
