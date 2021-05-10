@@ -19,7 +19,7 @@ public:
 	static const int MAX_RANGE = 10; // TODO: tweak
 	float distanceTravelled;
 	glm::vec3 direction;
-	float mvmtSpeed = 20.0f;
+	float mvmtSpeed = 10.0f;
 	float maxDistance = 100.0f;
 
 	Projectile(glm::vec3 position, glm::vec3 direction, Shader* shader) : Entity(shader, "BALL1.obj") {

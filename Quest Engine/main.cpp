@@ -391,7 +391,7 @@ int main(int argc, char* argv[]) {
 
 	for (int i = 0; i < sizeof(enemyPositions)/sizeof(float); i+=3)
 	{
-		Enemy* enemy = new Enemy(glm::vec3(enemyPositions[i], enemyPositions[i+1], enemyPositions[i+2]), 1.0f);
+		Enemy* enemy = new Enemy(glm::vec3(enemyPositions[i], enemyPositions[i+1], enemyPositions[i+2]), 2.0f);
 		enemies.push_back(enemy);
 	}
 

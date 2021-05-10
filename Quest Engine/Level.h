@@ -4,10 +4,20 @@
 
 #include "Entity.h"
 
+/**
+* A level of a game.
+* Manages entities and events between them.
+*/
 class Level {
 public:
+	/**
+	* The "world" entity that serves as a ground plane
+	*/
 	Entity* mainStage;
 
+	/**
+	* Remove this level and all entities in it.
+	*/
 	~Level()
 	{
 		for (std::map<entity_id_t, Entity*>::iterator i = entities.begin(); i != entities.end(); i++)
