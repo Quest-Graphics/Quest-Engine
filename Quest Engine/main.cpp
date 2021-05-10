@@ -90,6 +90,7 @@ void shootProjectiles(float currentFrame)
 	}
 }
 
+//Erases projectiles, updates their positions, generates new ones
 void handleProjectiles()
 {
 	int idx = -1;
@@ -276,6 +277,7 @@ void onReshape(int w, int h) {
 	checkError("Reshape");
 }
 
+//implements WASD movement for the character
 void onKeyboard(unsigned char key, int x, int y) {
 	float mvmtDist = deltaTime * 100.0f;
 	glm::vec3 mvmtDir(0.0f);
@@ -319,6 +321,7 @@ void onKeyboard(unsigned char key, int x, int y) {
 	checkError("Key");
 }
 
+//implements camera movement with the arrow keys
 void onSpecialInput(int key, int x, int y) {
 	switch (key)
 	{
@@ -364,7 +367,6 @@ int main(int argc, char* argv[]) {
 	// Create shaders
 	playerShader = new Shader("Shaders/multiLightsVert.shader", "Shaders/multiLightsFrag.shader");
 	planeShader = new Shader("Shaders/textureLightsVert.shader", "Shaders/textureLightsFrag.shader");
-	//planeShader = new Shader("Shaders/simpleModelVert.shader", "Shaders/simpleModelFrag.shader");
 	simpleShader = new Shader("Shaders/solidVert.shader", "Shaders/solidFrag.shader");
 
 	// Run game
@@ -372,6 +374,7 @@ int main(int argc, char* argv[]) {
 
 	level = new DemoLevel();
 
+	//generate coins
 	for (int i = 0; i < DemoLevel::NUM_COINS; i++) {
 		Coin* coin = new Coin(playerShader, static_cast<DemoLevel*>(level));
 		coin->position = randomPosition(upperBound, lowerBound);
@@ -382,6 +385,7 @@ int main(int argc, char* argv[]) {
 	player = new Player(playerShader, camera, level, coins);
 	player->setModel("PLAYER1.obj");
 
+	//setup camera
 	camera->m_position = glm::vec3(25.0f, 25.0f, 25.0f) + player->position;
 	camera->lookAt(player->position);
 
@@ -389,6 +393,7 @@ int main(int argc, char* argv[]) {
 
 	cube = new Cube("Textures/sauron.png");
 
+	//generate enemies
 	for (int i = 0; i < sizeof(enemyPositions)/sizeof(float); i+=3)
 	{
 		Enemy* enemy = new Enemy(glm::vec3(enemyPositions[i], enemyPositions[i+1], enemyPositions[i+2]), 2.0f);

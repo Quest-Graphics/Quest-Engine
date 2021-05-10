@@ -40,6 +40,7 @@ void Entity::render(glm::mat4 model, glm::mat4 view, glm::mat4 projection)
 	}
 }
 
+//sets the entity's model to the model contained in objectFile- returns true if successful, false if not
 bool Entity::setModel(std::string objectFile) {
 	Model* model = Model::getOrLoad(objectFile);
 
@@ -51,6 +52,7 @@ bool Entity::setModel(std::string objectFile) {
 	return false;
 }
 
+//sets the entitity's texture to the texture contained in textureFile- returns true if successful, false if not
 bool Entity::setTexture(std::string textureFile)
 {
 	unsigned int texture;
@@ -82,6 +84,7 @@ bool Entity::setTexture(std::string textureFile)
 	return false;
 }
 
+//generates the entity's bounding box
 AABB Entity::extent() {
 	return _model->extent() + position;
 }

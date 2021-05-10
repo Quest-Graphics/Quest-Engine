@@ -25,6 +25,7 @@ public:
              0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
         };
 
+        //vertex buffer setup
         unsigned int VBO;
         glGenVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);
@@ -48,6 +49,7 @@ public:
         int width, height, nrChannels;
         unsigned char* data = stbi_load(imgname, &width, &height, &nrChannels, 0);
         
+        //texture setup
         glGenTextures(1, &texture);
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -129,6 +131,7 @@ public:
             -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left        
         };
 
+        //vertex buffer setup
         unsigned int VBO;
         glGenVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);
@@ -149,6 +152,7 @@ public:
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
+        //texture setup
         int width, height, nrChannels;
         unsigned char* data = stbi_load(imgname, &width, &height, &nrChannels, 0);
 

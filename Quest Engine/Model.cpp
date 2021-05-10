@@ -2,6 +2,7 @@
 
 std::map<std::string, Model> Model::modelCache;
 
+//Either loads the model or retrieves it from the cache, returns a pointer to it
 Model* Model::getOrLoad(std::string name) {
 	Model& model = modelCache[name];
 
@@ -69,6 +70,7 @@ void Model::buffer() {
 	}
 }
 
+//render function that receives a texture identifier and renders it as well
 void Model::render(glm::mat4 model, glm::mat4 view, glm::mat4 projection, Shader* shader, unsigned int texture)
 {
 	shader->use(); // Bind shader
@@ -129,6 +131,7 @@ void Model::render(glm::mat4 model, glm::mat4 view, glm::mat4 projection, Shader
 	shader->unuse();
 }
 
+//extent genereates and returns an AABB for the model
 AABB Model::extent()
 {
 	// X, Y, Z
