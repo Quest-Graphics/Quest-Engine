@@ -6,6 +6,8 @@
 class Enemy : public Entity {
 protected:
 	Shader* _shader;
+	float lastShot;
+	float fireRate;
 
 	// Initialize shader after GL
 	Shader* shader() {
@@ -17,20 +19,31 @@ protected:
 	}
 
 	std::vector<Projectile*> projectiles;
-	unsigned short lastShot = 0; // how long ago we last shot a projectile
 
 public:
-	Enemy(glm::vec3 position) : Entity(shader(), "cube.obj") {
+
+	Enemy(glm::vec3 position, float fireRate) : Entity(shader(), "cube.obj") {
 		this->position = position;
+		this->lastShot = 0.0f;
+		this->fireRate = fireRate;
 	}
 
+	/*
+	void shoot() {
+		projectiles.push_back(new Projectile(position, facing_vec()));
+		lastShot = 0;
+	}
+	*/
+
 	void tick() {
+		/*
 		// Shoot projectiles at a random interval
 		if (lastShot++ >= std::rand() % 300 + 200) {
 			// 200-500 ticks = 2-5 seconds
 			shoot();
 		}
 
+		
 		// Update all projectiles
 		std::vector<Projectile*>::iterator p = projectiles.begin();
 		while (p != projectiles.end()) {
@@ -41,19 +54,21 @@ public:
 				p = projectiles.erase(p);
 			}
 		}
+		*/
 	}
 
-	void render(glm::mat4 view, glm::mat4* projection) override {
-		Entity::render(view, projection);
-
-		// Render projectiles
-		for (auto projectile : projectiles) {
-			projectile->render(view, projection);
+	//fires shots at fireRate
+	bool fire(float currentTime)
+	{
+		if (currentTime - lastShot >= fireRate)
+		{
+			lastShot = currentTime;
+			return true;
 		}
+		return false;
 	}
 
-	void shoot() {
-		projectiles.push_back(new Projectile(position, facing_vec()));
-		lastShot = 0;
+	void render(glm::mat4 model, glm::mat4 view, glm::mat4 projection) override {
+		Entity::render(model, view, projection);
 	}
 };

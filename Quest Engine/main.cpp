@@ -10,11 +10,13 @@
 #include <glm/gtx/string_cast.hpp>
 
 #include "util.h"
+#include "Helper.h"
 
 #include "Camera.h"
 #include "Level.h"
 #include "Player.h"
 #include "Overlay.h"
+#include "Projectile.h"
 
 #include "Geometry.h"
 #include "Light.h"
@@ -28,7 +30,6 @@ Camera* camera = nullptr;
 Level* level = nullptr;
 Player* player = nullptr;
 Overlay* overlay = nullptr; // For 2D UI
-std::vector<Coin*> coins;
 Cube* enemy = nullptr;
 
 Shader* playerShader;
@@ -36,6 +37,9 @@ Shader* planeShader;
 Shader* simpleShader;
 Quad* plane;
 std::vector<Light*> lights;
+std::vector<Projectile*> projectiles;
+std::vector<Coin*> coins;
+std::vector<Enemy*> enemies;
 
 glm::mat4 playerModel;
 glm::mat4 cubeModel;
@@ -48,6 +52,8 @@ glm::mat4 projection;
 static float deltaTime = 0;
 
 unsigned int planeVAO;
+float angle = 0;
+int maxLights = 50;
 
 glm::vec2 upperBound(50.0f, 50.0f);
 glm::vec2 lowerBound(-50.0f, -50.0f);
@@ -59,7 +65,6 @@ float enemyPositions[] = {
 	-50.0f, 2.5f, -50.0f
 };
 
-
 void initRendering() {
 	glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
 	glEnable(GL_DEPTH_TEST);
@@ -67,12 +72,42 @@ void initRendering() {
 }
 
 void onDisplay() {
-	//camera->lookAt(glm::vec3(0.0f));
-
 	static float lastFrame = 0;
 	float currentFrame = float(glutGet(GLUT_ELAPSED_TIME)) / 1000.0f;
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
+
+	int idx = -1;
+	idx = checkProjectiles(projectiles);
+	if (idx >= 0)
+	{
+		std::cout << "projectile destroyed" << std::endl;
+		projectiles.erase(projectiles.begin() + idx);
+		lights.erase(lights.begin() + idx);
+	}
+
+	for (int i = 0; i < projectiles.size(); i++)
+	{
+		std::cout << "projectile position updated" << std::endl;
+		projectiles[i]->updatePos(currentFrame);
+	}
+
+	idx = checkCollision(coins, player);
+	if (idx >= 0)
+	{
+		std::cout << "coin gathered" << std::endl;
+		coins[idx]->hit();
+		coins.erase(coins.begin() + idx);
+	}
+	idx = checkCollision(projectiles, player);
+	if (idx >= 0)
+	{
+		std::cout << "GAME OVER" << std::endl;
+		exit(0);
+	}
+
+	if(lights.size() <= maxLights)
+		shootProjectiles(enemies, projectiles, lights, player, currentFrame, simpleShader);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -83,13 +118,14 @@ void onDisplay() {
 
 	glm::vec3 color;
 
+	
 	//all the lights
 	playerShader->use();
 	playerShader->setMat4("View", view);
 	playerShader->setMat4("Projection", projection);
 	playerShader->setVec3("viewPos", camera->m_position);
 	playerShader->setInt("numLights", lights.size());
-	playerShader->setFloat("shininess", 60.0f);
+	playerShader->setFloat("shininess", 50.0f);
 
 	for (int i = 0; i < lights.size(); i++)
 	{
@@ -104,6 +140,7 @@ void onDisplay() {
 		playerShader->setFloat("pointLights[" + std::to_string(i) + "].linear", lights[i]->linear);
 		playerShader->setFloat("pointLights[" + std::to_string(i) + "].quadratic", lights[i]->quadratic);
 	}
+	
 
 
 	//plane
@@ -115,32 +152,31 @@ void onDisplay() {
 	playerShader->setVec3("objColor", color);
 	plane->render();
 
+	/*
 	//enemy cubes
 	color = glm::vec3(1.0f, 0.0f, 0.0f);
 	playerShader->setVec3("objColor", color);
 	playerShader->setMat4("View", view);
 	playerShader->setMat4("Projection", projection);
 	playerShader->setVec3("objColor", color);
-	for (int i = 0; i < 12; i += 3)
+	for (int i = 0; i < enemies.size(); i += 3)
 	{ 
 		cubeModel = glm::mat4(1.0f);
-		cubeModel = glm::translate(cubeModel, glm::vec3(enemyPositions[i], enemyPositions[i+1], enemyPositions[i+2]));
 		cubeModel = glm::scale(cubeModel, glm::vec3(5.0f)); 
 		
 		playerShader->setMat4("Model", cubeModel);
-		enemy->render();
+		enemies[i]->render(cubeModel, view, projection);
 	}
+	*/
 
 
-	//coin
+	//coins
 	color = glm::vec3(1.0f, 1.0f, 0.0f);
-	coinModel = glm::mat4(1.0f);
 	playerShader->setVec3("objColor", color);
-	playerShader->setMat4("View", view);
-	playerShader->setMat4("Projection", projection);
-	playerShader->setMat4("Model", coinModel);
-	
+	playerShader->setFloat("shininess", 150.0f);
+	coinModel = glm::mat4(1.0f);
 	for (auto coin : coins) {
+		coinModel = glm::translate(coin->position + glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(angle, 0.0f, 1.0f, 0.0f) * glm::rotate(90.0f, 1.0f, 0.0f, 0.0f) * glm::translate(-coin->position);
 		coin->render(coinModel, view, projection);
 	}
 	
@@ -148,25 +184,27 @@ void onDisplay() {
 	playerShader->use();
 	color = glm::vec3(0.0f, 0.0f, 1.0f);
 	//playerModel = glm::rotate(player->facing, glm::vec3(0.0f, 1.0f, 0.0f));
-	playerShader->setMat4("Model", playerModel);
 	playerShader->setVec3("objColor", color);
 	player->render(playerModel, view, projection);
 
-
+	
 	//cube light
 	simpleShader->use();
-	for (int i = 0; i < lights.size(); i++)
+	for (int i = 0; i < projectiles.size(); i++)
 	{
-		cubeModel = glm::translate(lights[i]->position);
+		cubeModel = glm::translate(projectiles[i]->position);
 		simpleShader->setMat4("Model", cubeModel);
 		simpleShader->setMat4("View", view);
 		simpleShader->setMat4("Projection", projection);
-		simpleShader->setVec3("objColor", lights[0]->color);
-		enemy->render();
+		simpleShader->setVec3("objColor", lights[i]->color);
+		projectiles[i]->render(cubeModel, view, projection);
 	}
+	
 
 	glutSwapBuffers();
 	checkError("Display");
+
+	angle += 0.5f;
 }
 
 void onIdle() {
@@ -222,7 +260,7 @@ void onKeyboard(unsigned char key, int x, int y) {
 		return;
 
 	player->position += mvmtDir;
-	player->onKeyboard(key, x, y);
+	//player->onKeyboard(key, x, y);
 	camera->m_position += mvmtDir;
 
 	checkError("Key");
@@ -281,7 +319,9 @@ int main(int argc, char* argv[]) {
 	level = new DemoLevel();
 
 	for (int i = 0; i < DemoLevel::NUM_COINS; i++) {
-		coins.push_back(new Coin(playerShader, static_cast<DemoLevel*>(level)));
+		Coin* coin = new Coin(playerShader, static_cast<DemoLevel*>(level));
+		coin->position = randomPosition(upperBound, lowerBound);
+		coins.push_back(coin);
 	}
 
 	// Create main player
@@ -292,7 +332,12 @@ int main(int argc, char* argv[]) {
 	camera->lookAt(player->position);
 
 	plane = new Quad();
-	enemy = new Cube();
+
+	for (int i = 0; i < 12; i+=3)
+	{
+		Enemy* enemy = new Enemy(glm::vec3(enemyPositions[i], enemyPositions[i+1], enemyPositions[i+2]), 2.0f);
+		enemies.push_back(enemy);
+	}
 
 	//Here's what you should do with every light
 	Light* light = new Light();
@@ -308,22 +353,7 @@ int main(int argc, char* argv[]) {
 	light->quadratic = 0.01f;
 	lights.push_back(light);
 
-	//second light
-	light = new Light();
-	light->position = glm::vec3(10.0f, 10.0f, 10.0f);
-	light->color = glm::vec3(1.0f);
-
-	light->ambient = glm::vec3(0.5f);
-	light->diffuse = glm::vec3(0.75f);
-	light->specular = glm::vec3(1.0f);
-
-	light->constant = 0.5f;
-	light->linear = 0.032f;
-	light->quadratic = 0.01f;
-	lights.push_back(light);
-
 	// Enter the main loop
 	glutMainLoop();
 	return 0;
 }
-

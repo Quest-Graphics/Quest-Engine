@@ -30,6 +30,8 @@ public:
 
 		if (++score == 10) {
 			glutSetWindowTitle("You win!");
+			std::cout << "You Win!" << std::endl;
+			exit(0);
 		}
 		else {
 			glutSetWindowTitle(("Score: " + std::to_string(score) + "/" + std::to_string(NUM_COINS)).c_str());
