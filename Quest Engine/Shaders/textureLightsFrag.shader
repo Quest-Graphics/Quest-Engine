@@ -42,9 +42,9 @@ vec3 pointLightCalc(Light light, vec3 viewDir, vec3 normal)
 	float dist = length(light.position - fragPos);
 	float attenuation = 1.0 / (light.constant + light.linear * dist + light.quadratic * dist * dist);
 
-	vec3 ambient = light.ambient * Ka * light.color * texture(ourTexture, TexCoords);
-	vec3 diffuse = light.diffuse * Kd * light.color * texture(ourTexture, TexCoords);
-	vec3 specular = light.specular * Ks * light.color * texture(ourTexture, TexCoords);
+	vec3 ambient = light.ambient * Ka * light.color * texture(ourTexture, TexCoords).xyz;
+	vec3 diffuse = light.diffuse * Kd * light.color * texture(ourTexture, TexCoords).xyz;
+	vec3 specular = light.specular * Ks * light.color * texture(ourTexture, TexCoords).xyz;
 
 	ambient *= attenuation;
 	diffuse *= attenuation;

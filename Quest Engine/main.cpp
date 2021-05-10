@@ -138,6 +138,8 @@ void onDisplay() {
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
 
+	handleProjectiles();
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	view = camera->viewMatrix();
@@ -256,8 +258,6 @@ void onDisplay() {
 	checkError("Display");
 
 	angle += 1.5f;
-
-	handleProjectiles();
 }
 
 void onIdle() {
