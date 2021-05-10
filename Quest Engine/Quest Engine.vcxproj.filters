@@ -22,6 +22,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{f758b596-1311-4393-a731-38ce016f4514}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Textures">
+      <UniqueIdentifier>{c1a960db-3a35-4cf4-9a2f-9dd6e0f303da}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -95,6 +98,9 @@
     <ClInclude Include="stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Helper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\simpleModelFrag.shader">
@@ -115,5 +121,16 @@
     <None Include="Shaders\phong2.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="textureLightsVert.shader">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="textureLightsFrag.shader">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Textures\lava.jpg">
+      <Filter>Textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>
