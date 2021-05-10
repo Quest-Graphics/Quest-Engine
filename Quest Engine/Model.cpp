@@ -69,6 +69,37 @@ void Model::buffer() {
 	}
 }
 
+void Model::render(glm::mat4 model, glm::mat4 view, glm::mat4 projection, Shader* shader, unsigned int texture)
+{
+	shader->use(); // Bind shader
+
+	shader->setMat4("Model", model);
+	shader->setMat4("View", view);		// send modelview to vertex shader
+	shader->setMat4("Projection", projection); // send projection to vertex shader
+
+	glBindTexture(GL_TEXTURE_2D, texture);
+	for (size_t i = 0; i < shapes.size(); i++) {
+		// VBO
+		glBindBuffer(GL_ARRAY_BUFFER, m_VBO[i]);
+		glEnableVertexAttribArray(ATTRLOC_vertexPosition);
+		glVertexAttribPointer(ATTRLOC_vertexPosition, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
+		checkError("Model::render/VBO");
+
+		// NBO
+		glBindBuffer(GL_ARRAY_BUFFER, m_NBO[i]);
+		glEnableVertexAttribArray(ATTRLOC_vertexNormal);
+		glVertexAttribPointer(ATTRLOC_vertexNormal, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
+		checkError("Model::render/NBO");
+
+		// IBO
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO[i]);
+		glDrawElements(GL_TRIANGLES, shapes[i].mesh.indices.size(), GL_UNSIGNED_INT, 0);
+		checkError("Model::render/IBO");
+	}
+
+	shader->unuse();
+}
+
 void Model::render(glm::mat4 model, glm::mat4 view, glm::mat4 projection, Shader* shader) {
 	shader->use(); // Bind shader
 

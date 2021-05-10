@@ -47,7 +47,7 @@ public:
 protected:
 	static entity_id_t currentId;
 
-	unsigned int texture = NULL;
+	unsigned int _texture = NULL;
 	entity_id_t _id;
 	Model* _model = nullptr;
 	Shader* _shader = nullptr;

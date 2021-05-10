@@ -46,6 +46,12 @@ struct Model
 	*/
 	void render(glm::mat4 model, glm::mat4 view, glm::mat4 projection, Shader* shader);
 
+	/**
+		Render this model to the screen
+		buffer() must have been called perviously if another model was rendered last
+		For usage with a texture
+	*/
+	void render(glm::mat4 model, glm::mat4 view, glm::mat4 projection, Shader* shader, unsigned int texture);
 	/*
 	Get the extent of them model along each axis.
 	@return an axis-aligned bounding box

@@ -13,7 +13,8 @@ Entity::Entity(Shader* shader, std::string initialModelFile, std::string initial
 
 	if (!initialTextureFile.empty())
 	{
-		setTexture(initialTextureFile);
+		if (!setTexture(initialTextureFile))
+			printf("Error loading texture %s", initialTextureFile.c_str());
 	}
 	_shader = shader;
 
@@ -30,8 +31,10 @@ void Entity::render(glm::mat4 model, glm::mat4 view, glm::mat4 projection)
 {
 	if (_model)
 	{
-		_model->render(model * glm::translate(position) * glm::rotate(facing, AXIS_Y), view, projection, _shader);
-		
+		if (!_texture)
+			_model->render(model * glm::translate(position) * glm::rotate(facing, AXIS_Y), view, projection, _shader);
+		else
+			_model->render(model * glm::translate(position) * glm::rotate(facing, AXIS_Y), view, projection, _shader, _texture);
 		
 		(("Entity(" + std::to_string(_id) + ")::render").c_str());
 	}
@@ -50,9 +53,32 @@ bool Entity::setModel(std::string objectFile) {
 
 bool Entity::setTexture(std::string textureFile)
 {
-	int width, height, nrChannels;
-	unsigned char* data = stbi_load(textureFile.c_str(), &width, &height, &nrChannels, 0);
+	unsigned int texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	// set the texture wrapping/filtering options (on the currently bound texture object)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+	int width, height, nrChannels;
+	unsigned char* data = stbi_load(("Models/"+textureFile).c_str(), &width, &height, &nrChannels, 0);
+
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	stbi_image_free(data);
+	if (data)
+	{
+
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		_texture = texture;
+		return true;
+	}
 	return false;
 }
 

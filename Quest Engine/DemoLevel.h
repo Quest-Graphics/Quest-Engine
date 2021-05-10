@@ -12,7 +12,7 @@ public:
 	DemoLevel()
 	{
 		Shader* sceneShader = new Shader("Shaders/simpleModelVert.shader", "Shaders/simpleModelFrag.shader");
-		addEntity(mainStage = new Entity(sceneShader, "STAGE2.obj"));
+		addEntity(mainStage = new Entity(sceneShader, "STAGE2.obj", "STAGE.tga"));
 		PlaySound(L"Sounds/DOOM 2016.wav", NULL, SND_ASYNC | SND_FILENAME | SND_LOOP);
 	}
 
