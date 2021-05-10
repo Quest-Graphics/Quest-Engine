@@ -26,11 +26,13 @@ public:
 
 	void onKeyboard(unsigned char key, int x, int y)
 	{
+		/*
 		for (Coin* coin : _coins) {
 			if (intersects(coin)) {
 				coin->hit();
 			}
 		}
+		*/
 	}
 
 	void onSpecialInput(int key, int x, int y)
