@@ -24,13 +24,13 @@ glm::vec3 randomPosition(glm::vec2 upperBound, glm::vec2 lowerBound) {
 	return position;
 }
 
-//assume radius of coins and projectiles is 0.5 and radius of player is 1.0
+//assume radius of coins are 0.5 and radius of player is 1.0
 //returns the index that needs to be popped
-int checkCollision(std::vector<Coin*> coins, Player* player)
+int checkCollision(std::vector<Coin*> coins, glm::vec3 playerPos)
 {
 	for (int i = 0; i < coins.size(); i++)
 	{
-		if (glm::distance(player->position, coins[i]->position) <= 2.5f)
+		if (glm::distance(playerPos, coins[i]->position) <= 2.5f)
 		{
 			return i;
 		}
@@ -39,44 +39,20 @@ int checkCollision(std::vector<Coin*> coins, Player* player)
 	return -1;
 }
 
-int checkCollision(std::vector<Projectile*> projectiles, Player* player)
+//check collision between player and projectile
+int checkCollision(std::vector<Projectile*> projectiles, glm::vec3 playerPos)
 {
 	for (int i = 0; i < projectiles.size(); i++)
 	{
-		if (glm::distance(player->position, projectiles[i]->position) <= 2.5f)
+		glm::vec3 proPos = projectiles[i]->position;
+		proPos.y = 0.0f;
+		if (glm::distance(playerPos, proPos) <= 2.0f)
 		{
 			return i;
 		}
 	}
 
 	return -1;
-}
-
-//emitts projectiles from enemy position
-void shootProjectiles(std::vector<Enemy*> enemies, std::vector<Projectile*> projectiles, std::vector<Light*> lights, Player* player, float currentTime, Shader* shader)
-{
-	for (int i = 0; i < enemies.size(); i++)
-	{
-		if (enemies[i]->fire(currentTime))
-		{
-			Projectile* projectile = new Projectile(enemies[i]->position, player->position - enemies[i]->position, shader);
-			projectiles.push_back(projectile);
-
-			//create new light and tie it to the projectile
-			Light* light = new Light();
-			light->position = projectile->position;
-			light->color = glm::vec3(1.0f);
-
-			light->ambient = glm::vec3(0.5f);
-			light->diffuse = glm::vec3(0.75f);
-			light->specular = glm::vec3(1.0f);
-
-			light->constant = 0.5f;
-			light->linear = 0.032f;
-			light->quadratic = 0.01f;
-			lights.push_back(light);
-		}
-	}
 }
 
 //check projectiles

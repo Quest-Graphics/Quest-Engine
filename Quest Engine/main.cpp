@@ -42,7 +42,8 @@ std::vector<Coin*> coins;
 std::vector<Enemy*> enemies;
 
 glm::mat4 playerModel;
-glm::mat4 cubeModel;
+glm::mat4 projectileModel;
+glm::mat4 enemyModel;
 glm::mat4 planeModel;
 glm::mat4 coinModel;
 
@@ -50,20 +51,80 @@ glm::mat4 view;
 glm::mat4 projection;
 
 static float deltaTime = 0;
+static float currentFrame = 0;
 
 unsigned int planeVAO;
 float angle = 0;
-int maxLights = 50;
+int maxLights = 20;
 
 glm::vec2 upperBound(50.0f, 50.0f);
 glm::vec2 lowerBound(-50.0f, -50.0f);
 
 float enemyPositions[] = {
-	 50.0f, 2.5f,  50.0f, 
-	 50.0f, 2.5f, -50.0f,
-	-50.0f, 2.5f,  50.0f,
-	-50.0f, 2.5f, -50.0f
+	 50.0f, 1.0f,  50.0f, 
+	 50.0f, 1.0f, -50.0f,
+	-50.0f, 1.0f,  50.0f,
+	-50.0f, 1.0f, -50.0f
 };
+
+//creates projectiles and attaches lights to them
+void shootProjectiles(float currentFrame)
+{
+	for (int i = 0; i < enemies.size(); i++)
+	{
+		if (enemies[i]->fire(currentFrame))
+		{
+			glm::vec3 trajectory = glm::normalize(player->position - enemies[i]->position);
+			trajectory.y = 0.0f;
+			glm::vec3 projPos = enemies[i]->position;
+			projPos.y = 0.75f;
+
+			Projectile* projectile = new Projectile(projPos, trajectory, simpleShader);
+			projectiles.push_back(projectile);
+
+			//create new light and tie it to the projectile
+			Light* newLight = light(glm::vec3(0.0f), glm::vec3(1.0f), glm::vec3(0.40f), glm::vec3(0.5f), glm::vec3(1.0f), 0.5f, 0.25f, 0.0025f);
+	
+			lights.push_back(newLight);
+		}
+	}
+}
+
+void handleProjectiles()
+{
+	int idx = -1;
+	idx = checkProjectiles(projectiles);
+	if (idx != -1)
+	{
+		projectiles.erase(projectiles.begin() + idx);
+		lights.erase(lights.begin() + idx);
+	}
+
+	for (int i = 0; i < projectiles.size(); i++)
+	{
+		projectiles[i]->updatePos(deltaTime);
+		lights[i]->position = projectiles[i]->position;
+	}
+
+	idx = -1;
+	idx = checkCollision(coins, player->position);
+	if (idx != -1)
+	{
+		coins[idx]->hit();
+		coins.erase(coins.begin() + idx);
+	}
+
+	idx = -1;
+	idx = checkCollision(projectiles, player->position);
+	if (idx != -1)
+	{
+		std::cout << "GAME OVER" << std::endl;
+		exit(0);
+	}
+
+	if (lights.size() <= maxLights)
+		shootProjectiles(currentFrame);
+}
 
 void initRendering() {
 	glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
@@ -73,41 +134,9 @@ void initRendering() {
 
 void onDisplay() {
 	static float lastFrame = 0;
-	float currentFrame = float(glutGet(GLUT_ELAPSED_TIME)) / 1000.0f;
+	currentFrame = float(glutGet(GLUT_ELAPSED_TIME)) / 1000.0f;
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
-
-	int idx = -1;
-	idx = checkProjectiles(projectiles);
-	if (idx >= 0)
-	{
-		std::cout << "projectile destroyed" << std::endl;
-		projectiles.erase(projectiles.begin() + idx);
-		lights.erase(lights.begin() + idx);
-	}
-
-	for (int i = 0; i < projectiles.size(); i++)
-	{
-		std::cout << "projectile position updated" << std::endl;
-		projectiles[i]->updatePos(currentFrame);
-	}
-
-	idx = checkCollision(coins, player);
-	if (idx >= 0)
-	{
-		std::cout << "coin gathered" << std::endl;
-		coins[idx]->hit();
-		coins.erase(coins.begin() + idx);
-	}
-	idx = checkCollision(projectiles, player);
-	if (idx >= 0)
-	{
-		std::cout << "GAME OVER" << std::endl;
-		exit(0);
-	}
-
-	if(lights.size() <= maxLights)
-		shootProjectiles(enemies, projectiles, lights, player, currentFrame, simpleShader);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -115,6 +144,7 @@ void onDisplay() {
 	projection = glm::perspective(camera->m_fov, (float) viewport.x / viewport.y, 1.0f, 1000.0f);
 	glm::vec2 scaleFactor = upperBound - lowerBound;
 	planeModel = glm::translate(upperBound.x + lowerBound.x, 0.0f, upperBound.y + lowerBound.y) * glm::scale(scaleFactor.x, 1.0f, scaleFactor.y) * glm::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+	playerModel = glm::mat4(1.0f);
 
 	glm::vec3 color;
 
@@ -140,8 +170,18 @@ void onDisplay() {
 		playerShader->setFloat("pointLights[" + std::to_string(i) + "].linear", lights[i]->linear);
 		playerShader->setFloat("pointLights[" + std::to_string(i) + "].quadratic", lights[i]->quadratic);
 	}
-	
+	playerShader->unuse();
 
+	//projectile light
+	simpleShader->use();
+	color = glm::vec3(1.0f, 1.0f, 0.75f);
+	for (int i = 0; i < projectiles.size(); i++)
+	{
+		projectileModel = glm::mat4(1.0f);
+		simpleShader->setVec3("objColor", color);
+		projectiles[i]->render(projectileModel, view, projection);
+	}
+	simpleShader->unuse();
 
 	//plane
 	playerShader->use();
@@ -151,26 +191,10 @@ void onDisplay() {
 	playerShader->setMat4("Projection", projection);
 	playerShader->setVec3("objColor", color);
 	plane->render();
-
-	/*
-	//enemy cubes
-	color = glm::vec3(1.0f, 0.0f, 0.0f);
-	playerShader->setVec3("objColor", color);
-	playerShader->setMat4("View", view);
-	playerShader->setMat4("Projection", projection);
-	playerShader->setVec3("objColor", color);
-	for (int i = 0; i < enemies.size(); i += 3)
-	{ 
-		cubeModel = glm::mat4(1.0f);
-		cubeModel = glm::scale(cubeModel, glm::vec3(5.0f)); 
-		
-		playerShader->setMat4("Model", cubeModel);
-		enemies[i]->render(cubeModel, view, projection);
-	}
-	*/
-
+	playerShader->unuse();
 
 	//coins
+	playerShader->use();
 	color = glm::vec3(1.0f, 1.0f, 0.0f);
 	playerShader->setVec3("objColor", color);
 	playerShader->setFloat("shininess", 150.0f);
@@ -179,32 +203,37 @@ void onDisplay() {
 		coinModel = glm::translate(coin->position + glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(angle, 0.0f, 1.0f, 0.0f) * glm::rotate(90.0f, 1.0f, 0.0f, 0.0f) * glm::translate(-coin->position);
 		coin->render(coinModel, view, projection);
 	}
+	playerShader->unuse();
 	
 	//player
 	playerShader->use();
 	color = glm::vec3(0.0f, 0.0f, 1.0f);
-	//playerModel = glm::rotate(player->facing, glm::vec3(0.0f, 1.0f, 0.0f));
 	playerShader->setVec3("objColor", color);
+	playerModel = glm::mat4(1.0f);
 	player->render(playerModel, view, projection);
+	playerShader->unuse();
 
-	
-	//cube light
-	simpleShader->use();
-	for (int i = 0; i < projectiles.size(); i++)
+	/*
+	//enemy cubes
+	playerShader->use();
+	color = glm::vec3(1.0f, 0.0f, 0.0f);
+	playerShader->setVec3("objColor", color);
+	for (int i = 0; i < enemies.size(); i += 3)
 	{
-		cubeModel = glm::translate(projectiles[i]->position);
-		simpleShader->setMat4("Model", cubeModel);
-		simpleShader->setMat4("View", view);
-		simpleShader->setMat4("Projection", projection);
-		simpleShader->setVec3("objColor", lights[i]->color);
-		projectiles[i]->render(cubeModel, view, projection);
+		enemyModel = glm::mat4(1.0f);
+
+		playerShader->setMat4("Model", enemyModel);
+		enemies[i]->render(enemyModel, view, projection);
 	}
+	*/
 	
 
 	glutSwapBuffers();
 	checkError("Display");
 
-	angle += 0.5f;
+	angle += 1.0f;
+
+	handleProjectiles();
 }
 
 void onIdle() {
@@ -311,7 +340,7 @@ int main(int argc, char* argv[]) {
 	// Create shaders
 	playerShader = new Shader("Shaders/multiLightsVert.shader", "Shaders/multiLightsFrag.shader");
 	//planeShader = new Shader("Shaders/simpleModelVert.shader", "Shaders/simpleModelFrag.shader");
-	simpleShader = new Shader("Shaders/simpleModelVert.shader", "Shaders/simpleModelFrag.shader");
+	simpleShader = new Shader("Shaders/solidVert.shader", "Shaders/solidFrag.shader");
 
 	// Run game
 	camera = new Camera();
@@ -328,7 +357,7 @@ int main(int argc, char* argv[]) {
 	player = new Player(playerShader, camera, level, coins);
 	player->setModel("PLAYER1.obj");
 
-	camera->m_position = glm::vec3(15.0f, 15.0f, 15.0f) + player->position;
+	camera->m_position = glm::vec3(25.0f, 25.0f, 25.0f) + player->position;
 	camera->lookAt(player->position);
 
 	plane = new Quad();
@@ -338,20 +367,6 @@ int main(int argc, char* argv[]) {
 		Enemy* enemy = new Enemy(glm::vec3(enemyPositions[i], enemyPositions[i+1], enemyPositions[i+2]), 2.0f);
 		enemies.push_back(enemy);
 	}
-
-	//Here's what you should do with every light
-	Light* light = new Light();
-	light->position = glm::vec3(0.0f, 10.0f, 0.0f);
-	light->color = glm::vec3(1.0f);
-
-	light->ambient = glm::vec3(0.5f);
-	light->diffuse = glm::vec3(0.75f);
-	light->specular = glm::vec3(1.0f);
-
-	light->constant = 0.5f;
-	light->linear = 0.032f;
-	light->quadratic = 0.01f;
-	lights.push_back(light);
 
 	// Enter the main loop
 	glutMainLoop();

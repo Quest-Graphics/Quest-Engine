@@ -60,7 +60,7 @@ public:
 	//fires shots at fireRate
 	bool fire(float currentTime)
 	{
-		if (currentTime - lastShot >= fireRate)
+		if (currentTime - lastShot >= fireRate || lastShot == 0)
 		{
 			lastShot = currentTime;
 			return true;
