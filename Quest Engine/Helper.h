@@ -24,6 +24,15 @@ glm::vec3 randomPosition(glm::vec2 upperBound, glm::vec2 lowerBound) {
 	return position;
 }
 
+//random light colors
+glm::vec3 randomColor() {
+	glm::vec3 color;
+	color.x = glm::compRand1(0.25f, 1.0f);
+	color.y = glm::compRand1(0.25f, 1.0f);
+	color.z = glm::compRand1(0.25f, 1.0f);
+	return color;
+}
+
 //assume radius of coins are 0.5 and radius of player is 1.0
 //returns the index that needs to be popped
 int checkCollision(std::vector<Coin*> coins, glm::vec3 playerPos)

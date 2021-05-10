@@ -30,7 +30,7 @@ Camera* camera = nullptr;
 Level* level = nullptr;
 Player* player = nullptr;
 Overlay* overlay = nullptr; // For 2D UI
-Cube* enemy = nullptr;
+Cube* cube = nullptr;
 
 Shader* playerShader;
 Shader* planeShader;
@@ -77,13 +77,13 @@ void shootProjectiles(float currentFrame)
 			glm::vec3 trajectory = glm::normalize(player->position - enemies[i]->position);
 			trajectory.y = 0.0f;
 			glm::vec3 projPos = enemies[i]->position;
-			projPos.y = 0.75f;
+			projPos.y = 1.0f;
 
 			Projectile* projectile = new Projectile(projPos, trajectory, simpleShader);
 			projectiles.push_back(projectile);
 
 			//create new light and tie it to the projectile
-			Light* newLight = light(glm::vec3(0.0f), glm::vec3(1.0f), glm::vec3(0.40f), glm::vec3(0.5f), glm::vec3(1.0f), 0.5f, 0.25f, 0.0025f);
+			Light* newLight = light(glm::vec3(0.0f), randomColor(), glm::vec3(0.4f), glm::vec3(0.75f), glm::vec3(1.0f), 0.6f, 0.25f, 0.0035f);
 	
 			lights.push_back(newLight);
 		}
@@ -146,8 +146,15 @@ void onDisplay() {
 	planeModel = glm::translate(upperBound.x + lowerBound.x, 0.0f, upperBound.y + lowerBound.y) * glm::scale(scaleFactor.x, 1.0f, scaleFactor.y) * glm::rotate(90.0f, 1.0f, 0.0f, 0.0f);
 	playerModel = glm::mat4(1.0f);
 
-	glm::vec3 color;
+	//plane
+	planeShader->use();
+	planeShader->setMat4("Model", planeModel);
+	planeShader->setMat4("View", view);
+	planeShader->setMat4("Projection", projection);
+	plane->render();
+	planeShader->unuse();
 
+	glm::vec3 color;
 	
 	//all the lights
 	playerShader->use();
@@ -172,32 +179,45 @@ void onDisplay() {
 	}
 	playerShader->unuse();
 
+	//all the lights
+	planeShader->use();
+	planeShader->setMat4("View", view);
+	planeShader->setMat4("Projection", projection);
+	planeShader->setVec3("viewPos", camera->m_position);
+	planeShader->setInt("numLights", lights.size());
+	planeShader->setFloat("shininess", 50.0f);
+
+	for (int i = 0; i < lights.size(); i++)
+	{
+		planeShader->setVec3("pointLights[" + std::to_string(i) + "].position", lights[i]->position);
+		planeShader->setVec3("pointLights[" + std::to_string(i) + "].color", lights[i]->color);
+		
+		planeShader->setVec3("pointLights[" + std::to_string(i) + "].ambient", lights[i]->ambient);
+		planeShader->setVec3("pointLights[" + std::to_string(i) + "].diffuse", lights[i]->diffuse);
+		planeShader->setVec3("pointLights[" + std::to_string(i) + "].specular", lights[i]->specular);
+		
+		planeShader->setFloat("pointLights[" + std::to_string(i) + "].constant", lights[i]->constant);
+		planeShader->setFloat("pointLights[" + std::to_string(i) + "].linear", lights[i]->linear);
+		planeShader->setFloat("pointLights[" + std::to_string(i) + "].quadratic", lights[i]->quadratic);
+	}
+	planeShader->unuse();
+
 	//projectile light
 	simpleShader->use();
-	color = glm::vec3(1.0f, 1.0f, sin(angle/5) * 0.75f);
 	for (int i = 0; i < projectiles.size(); i++)
 	{
 		projectileModel = glm::mat4(1.0f);
-		simpleShader->setVec3("objColor", color);
+		simpleShader->setVec3("objColor", lights[i]->color);
 		projectiles[i]->render(projectileModel, view, projection);
 	}
 	simpleShader->unuse();
 
-	//plane
-	playerShader->use();
-	color = glm::vec3(0.0f, 1.0f, 0.0f);
-	playerShader->setMat4("Model", planeModel);
-	playerShader->setMat4("View", view);
-	playerShader->setMat4("Projection", projection);
-	playerShader->setVec3("objColor", color);
-	plane->render();
-	playerShader->unuse();
 
 	//coins
 	playerShader->use();
 	color = glm::vec3(0.9f, 0.9f, 0.0f);
 	playerShader->setVec3("objColor", color);
-	playerShader->setFloat("shininess", 150.0f);
+	playerShader->setFloat("shininess", 250.0f);
 	coinModel = glm::mat4(1.0f);
 	for (auto coin : coins) {
 		coinModel = glm::translate(coin->position + glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(angle, 0.0f, 1.0f, 0.0f) * glm::rotate(90.0f, 1.0f, 0.0f, 0.0f) * glm::translate(-coin->position);
@@ -207,7 +227,7 @@ void onDisplay() {
 	
 	//player
 	playerShader->use();
-	color = glm::vec3(0.3f, 0.15f, 0.0f);
+	color = glm::vec3(0.5f, 0.5f, 0.6f);
 	playerShader->setVec3("objColor", color);
 	playerModel = glm::mat4(1.0f);
 	player->render(playerModel, view, projection);
@@ -215,23 +235,27 @@ void onDisplay() {
 
 	
 	//enemy cubes
-	playerShader->use();
+	planeShader->use();
 	color = glm::vec3(1.0f, 0.0f, 0.0f);
-	playerShader->setVec3("objColor", color);
-	for (int i = 0; i < enemies.size(); i += 3)
+	planeShader->setVec3("objColor", color);
+	for (int i = 0; i < enemies.size(); i++)
 	{
 		enemyModel = glm::mat4(1.0f);
+		enemyModel = glm::translate(enemyModel, enemies[i]->position);
+		enemyModel = glm::rotate(enemyModel, angle * 2.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+		enemyModel = glm::rotate(enemyModel, 45.0f, glm::vec3(1.0f, 0.0f, 1.0f));
+		enemyModel = glm::scale(enemyModel, glm::vec3(5.0f));
 
 		playerShader->setMat4("Model", enemyModel);
-		enemies[i]->render(enemyModel, view, projection);
+		cube->render();
 	}
-	
+	planeShader->unuse();
 	
 
 	glutSwapBuffers();
 	checkError("Display");
 
-	angle += 1.0f;
+	angle += 1.5f;
 
 	handleProjectiles();
 }
@@ -339,6 +363,7 @@ int main(int argc, char* argv[]) {
 
 	// Create shaders
 	playerShader = new Shader("Shaders/multiLightsVert.shader", "Shaders/multiLightsFrag.shader");
+	planeShader = new Shader("Shaders/textureLightsVert.shader", "Shaders/textureLightsFrag.shader");
 	//planeShader = new Shader("Shaders/simpleModelVert.shader", "Shaders/simpleModelFrag.shader");
 	simpleShader = new Shader("Shaders/solidVert.shader", "Shaders/solidFrag.shader");
 
@@ -360,9 +385,11 @@ int main(int argc, char* argv[]) {
 	camera->m_position = glm::vec3(25.0f, 25.0f, 25.0f) + player->position;
 	camera->lookAt(player->position);
 
-	plane = new Quad();
+	plane = new Quad("Textures/lava.jpg");
 
-	for (int i = 0; i < 12; i+=3)
+	cube = new Cube("Textures/sauron.png");
+
+	for (int i = 0; i < sizeof(enemyPositions)/sizeof(float); i+=3)
 	{
 		Enemy* enemy = new Enemy(glm::vec3(enemyPositions[i], enemyPositions[i+1], enemyPositions[i+2]), 1.0f);
 		enemies.push_back(enemy);
