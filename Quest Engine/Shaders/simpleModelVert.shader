@@ -9,6 +9,9 @@ uniform mat4 View;
 uniform mat4 Projection;
 uniform vec3 objColor;
 
+out vec2 TexCoord;
+
 void main() {
 	gl_Position = Projection * View * Model * vec4(vertexPosition, 1.0);
+	TexCoord = textureCoords;
 }
